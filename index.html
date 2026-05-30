@@ -87,6 +87,7 @@
         .action-btn { padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; color: white; margin: 2px; transition: background 0.2s; }
         .btn-edit-score { background-color: #0288d1; }
         .btn-edit-answers { background-color: #f57c00; }
+        .btn-reset-servant { background-color: var(--error); } /* استايل زرار الحذف والمسح */
         
         .excel-btn { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(46,125,50,0.2); transition: all 0.3s; }
         .excel-btn:hover { background: linear-gradient(135deg, #2e7d32, #1b5e20); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -191,7 +192,7 @@
                 <option value="مينا اشرف">مينا اشرف</option>
                 <option value="مينا مجدي">مينا مجدي</option>
                 <option value="ناهد فاروق">ناهد فاروق</option>
-                <option value="نرجس خير">نرجس خير</option>
+                <option value="nrgis khayr">نرجس خير</option>
                 <option value="نرمين سليمان">نرمين سليمان</option>
                 <option value="نعمة عبدالسيد">نعمة عبدالسيد</option>
                 <option value="هيلانة جورج">هيلانة جورج</option>
@@ -285,7 +286,7 @@
                             <th>الخادم</th>
                             <th>الدرجة</th>
                             <th>وقت الدخول</th>
-                            <th>الالتحكم والإدارة</th>
+                            <th>التحكم والإدارة</th>
                         </tr>
                     </thead>
                     <tbody id="adminTableBody"></tbody>
@@ -525,6 +526,7 @@
                         <td>
                             <button class="action-btn btn-edit-score" onclick="openScoreEditor('${servantName}', ${scores[servantName]})">✏️ الدرجة</button>
                             <button class="action-btn btn-edit-answers" onclick="openAnswersEditor('${servantName}')">🔍 الإجابات</button>
+                            <button class="action-btn btn-reset-servant" onclick="resetServantData('${servantName}')">🔄 إعادة تعيين</button>
                         </td>
                     </tr>
                 `;
@@ -532,6 +534,29 @@
             }
             if (rowNumber === 1) {
                 tbody.innerHTML = `<tr><td colspan="5" style="color:#aaa; font-style:italic;">لم يقم أي خادم بدخول الامتحان اليوم حتى الآن.</td></tr>`;
+            }
+        }
+
+        // دالة مسح إجابات وبيانات الخادم بالكامل لإعادة الامتحان
+        function resetServantData(name) {
+            if (confirm(`هل أنت متأكد من مسح كافة إجابات ودرجة الخادم (${name}) بالكامل للسماح له بدخول الامتحان مرة أخرى؟`)) {
+                let scores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+                let times = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_times")) || {};
+                let answers = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_answers")) || {};
+                
+                // حذف البيانات تماماً من الذاكرة
+                delete scores[name];
+                delete times[name];
+                delete answers[name];
+                
+                // حفظ التعديلات الجديدة
+                localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scores));
+                localStorage.setItem(DAILY_QUIZ_ID + "_times", JSON.stringify(times));
+                localStorage.setItem(DAILY_QUIZ_ID + "_answers", JSON.stringify(answers));
+                
+                alert(`تم مسح بيانات الخادم ${name} بنجاح! يمكنه الآن تسجيل الدخول وحل المسابقة من جديد.`);
+                loadAdminData(); // تحديث الجدول فوراً
+                document.getElementById("adminEditArea").innerHTML = ""; // إغلاق أي نافذة تعديل مفتوحة لقفل الأخطاء
             }
         }
 
@@ -616,12 +641,10 @@
             loadAdminData();
         }
 
-        // الدالة العبقرية الجديدة والمدمجة لسحب وحفظ البيانات كملف إكسيل منسق وملون فوراً
         function downloadExcelReport() {
             let scores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
             let times = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_times")) || {};
             
-            // 1. بناء مصفوفة البيانات باللغة العربية والترتيب المسلسل
             let excelData = [];
             let rowNum = 1;
             
@@ -641,25 +664,19 @@
                 return;
             }
             
-            // 2. تحويل البيانات إلى شيت إكسيل مستقل باستخدام مكتبة XLSX
             let worksheet = XLSX.utils.json_to_sheet(excelData);
             let workbook = XLSX.utils.book_new();
             
-            // تحديد اتجاه الصفحة من اليمين لليسار عشان العربي يظهر مظبوط ومثالي
             worksheet['!dir'] = "rtl";
-            
-            // ضبط حجم الأعمدة ديناميكياً عشان مفيش كلام يتقطع أو يظهر رموز ###
             worksheet['!cols'] = [
-                { wch: 6 },  // عمود المسلسل
-                { wch: 26 }, // عمود اسم الخادم
-                { wch: 15 }, // عمود الدرجة
-                { wch: 18 }, // عمود وقت الدخول
-                { wch: 20 }  // عمود الحالة
+                { wch: 6 },  
+                { wch: 26 }, 
+                { wch: 15 }, 
+                { wch: 18 }, 
+                { wch: 20 }  
             ];
             
             XLSX.utils.book_append_sheet(workbook, worksheet, "نتائج الخدام اليومية");
-            
-            // 3. تحميل الملف فوراً على جهازك بصيغة XLSX
             let fileName = `تقرير_مسابقة_أبي_سيفين_${todayDate}.xlsx`;
             XLSX.writeFile(workbook, fileName);
         }
