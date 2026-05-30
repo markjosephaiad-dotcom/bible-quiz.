@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مسابقات دراسة الكتاب المقدس | أبي سيفين</title>
+    
     <script src="https://code.responsivevoice.org/responsivevoice.js?key=9E66FmsY"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
     <style>
         :root {
             --coptic-maroon: #580F0F; 
@@ -15,6 +19,8 @@
             --success: #1b5e20;
             --error: #b71c1c;
             --text-dark: #3E2723;
+            --table-stripe: #FDFBF7;
+            --table-hover: #F5EFE6;
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
@@ -23,7 +29,7 @@
         header h1 { font-size: 22px; font-weight: 700; margin-bottom: 5px; }
         header h2 { font-size: 15px; color: var(--coptic-gold); font-weight: 400; }
         .cross-icon { font-size: 20px; color: var(--coptic-gold); margin: 5px 0; }
-        .container { max-width: 700px; width: 92%; margin: 25px auto; background: var(--white); padding: 30px; border-radius: 16px; border: 1px solid rgba(197, 160, 89, 0.2); box-shadow: 0 10px 35px rgba(88, 15, 15, 0.05); }
+        .container { max-width: 850px; width: 92%; margin: 25px auto; background: var(--white); padding: 30px; border-radius: 16px; border: 1px solid rgba(197, 160, 89, 0.2); box-shadow: 0 10px 35px rgba(88, 15, 15, 0.05); }
         .page { display: none; }
         .active { display: block; }
         .images-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
@@ -70,9 +76,22 @@
         .review-item { background: #FAF9F6; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-right: 4px solid var(--coptic-gold); text-align: right; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .review-q { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; margin-bottom: 20px; }
-        th, td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #ddd; }
-        th { background-color: var(--coptic-maroon); color: white; }
+        /* استايل الجدول المنظم والملون للوحة التحكم المتوافقة مع الإكسيل */
+        .table-wrapper { box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; margin-top: 20px; margin-bottom: 25px; border: 1px solid #E2DEC5; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; background-color: var(--white); }
+        th, td { padding: 14px 10px; border-bottom: 1px solid #EAE5DC; }
+        th { background: linear-gradient(135deg, var(--coptic-dark), var(--coptic-maroon)); color: white; font-weight: 600; border-bottom: 3px solid var(--coptic-gold); }
+        tr:nth-child(even) { background-color: var(--table-stripe); }
+        tr:hover { background-color: var(--table-hover); transition: background 0.2s; }
+        
+        .action-btn { padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; color: white; margin: 2px; transition: background 0.2s; }
+        .btn-edit-score { background-color: #0288d1; }
+        .btn-edit-answers { background-color: #f57c00; }
+        
+        .excel-btn { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(46,125,50,0.2); transition: all 0.3s; }
+        .excel-btn:hover { background: linear-gradient(135deg, #2e7d32, #1b5e20); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        .admin-modal { background: #FFFDF9; border: 2px solid var(--coptic-gold); border-radius: 12px; padding: 20px; margin-top: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         .loading-text { text-align: center; color: var(--coptic-maroon); font-weight: bold; font-style: italic; margin: 20px 0; font-size: 15px; }
     </style>
 </head>
@@ -255,24 +274,31 @@
 
         <div id="adminPage" class="page">
             <h3>⚙️ لوحة تحكم أمانة الاجتماع</h3>
-            <div style="overflow-x: auto;">
-                <table>
+            
+            <button class="excel-btn" onclick="downloadExcelReport()">📥 تحميل تقرير الخدام كملف إكسيل مميز (.xlsx)</button>
+            
+            <div class="table-wrapper">
+                <table id="adminDataTable">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>الخادم</th>
                             <th>الدرجة</th>
                             <th>وقت الدخول</th>
+                            <th>الالتحكم والإدارة</th>
                         </tr>
                     </thead>
                     <tbody id="adminTableBody"></tbody>
                 </table>
             </div>
-            <button class="main-btn" onclick="goToHome()" style="margin-top: 10px; background: var(--coptic-dark);">الخروج والعودة</button>
+
+            <div id="adminEditArea"></div>
+
+            <button class="main-btn" onclick="goToHome()" style="margin-top: 15px; background: var(--coptic-dark);">الخروج والعودة للرئيسية</button>
         </div>
     </div>
 
     <script>
-        // روابط الـ CSV الناتجة عن "النشر على الويب"
         const QUESTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv";
         const CHAPTER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlHtC2XhIAwgkBPyOKvgS40OJ8JiYHt_019eGTHb9ltGaxc-oV6gT2QS924VOBSFZMv0N7d2OnzRBe/pub?output=csv";
 
@@ -304,6 +330,7 @@
         function switchPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
+            document.getElementById("adminEditArea").innerHTML = "";
         }
 
         function goToHome() {
@@ -315,19 +342,13 @@
 
         function exitChapterPage() { stopSpeaking(); goToHome(); }
 
-        // دالة القراءة المعدلة كلياً باستخدام المحرك الاحترافي المستقل
         function speakChapter() {
             if (!bibleChapterText || bibleChapterText.includes("جاري تحميل")) { 
                 alert("نص الأصحاح غير جاهز بعد."); 
                 return; 
             }
-            
-            // إلغاء أي قراءة شغالة حالياً قبل البدء
             if (window.responsiveVoice) {
                 window.responsiveVoice.cancel();
-                
-                // تشغيل الصوت الرجالي للفصحى مباشرة وبأعلى دقة تشكيل
-                // الإعدادات: السرعة (rate) = 0.82 لإعطاء وقار ووضوح تام لكل حركة تشكيلية
                 window.responsiveVoice.speak(bibleChapterText, "Arabic Male", {
                     rate: 0.82, 
                     pitch: 0.95
@@ -337,13 +358,8 @@
             }
         }
         
-        function pauseSpeaking() { 
-            if (window.responsiveVoice) window.responsiveVoice.pause(); 
-        }
-        
-        function stopSpeaking() { 
-            if (window.responsiveVoice) window.responsiveVoice.cancel(); 
-        }
+        function pauseSpeaking() { if (window.responsiveVoice) window.responsiveVoice.pause(); }
+        function stopSpeaking() { if (window.responsiveVoice) window.responsiveVoice.cancel(); }
 
         function handleNameChange() {
             let name = document.getElementById("servantSelect").value;
@@ -495,10 +511,157 @@
         function loadAdminData() {
             let scores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
             let times = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_times")) || {};
-            let tbody = document.getElementById("adminTableBody"); tbody.innerHTML = "";
-            for (let s in scores) {
-                tbody.innerHTML += `<tr><td><strong>${s}</strong></td><td>${scores[s]} / ${quizQuestions.length}</td><td>${times[s]||'--'}</td></tr>`;
+            let tbody = document.getElementById("adminTableBody"); 
+            tbody.innerHTML = "";
+            
+            let rowNumber = 1;
+            for (let servantName in scores) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${rowNumber}</strong></td>
+                        <td style="text-align: right; padding-right: 15px;"><strong>${servantName}</strong></td>
+                        <td style="color: var(--success); font-weight: bold;">${scores[servantName]} / ${quizQuestions.length}</td>
+                        <td><span style="background: #EFEBE9; padding: 4px 8px; border-radius: 5px; font-size:12px;">${times[servantName] || '--'}</span></td>
+                        <td>
+                            <button class="action-btn btn-edit-score" onclick="openScoreEditor('${servantName}', ${scores[servantName]})">✏️ الدرجة</button>
+                            <button class="action-btn btn-edit-answers" onclick="openAnswersEditor('${servantName}')">🔍 الإجابات</button>
+                        </td>
+                    </tr>
+                `;
+                rowNumber++;
             }
+            if (rowNumber === 1) {
+                tbody.innerHTML = `<tr><td colspan="5" style="color:#aaa; font-style:italic;">لم يقم أي خادم بدخول الامتحان اليوم حتى الآن.</td></tr>`;
+            }
+        }
+
+        function openScoreEditor(name, currentScore) {
+            let html = `
+                <div class="admin-modal">
+                    <h4 style="color:var(--coptic-maroon); margin-bottom:10px;">تعديل درجة الخادم: ${name}</h4>
+                    <label style="font-size:13px; display:block; margin-bottom:5px;">الدرجة الجديدة الحالية:</label>
+                    <input type="number" id="newScoreInput" value="${currentScore}" min="0" max="${quizQuestions.length}">
+                    <button class="main-btn" style="padding:8px; font-size:14px; background:var(--success);" onclick="saveNewScore('${name}')">حفظ الدرجة الجديدة 💾</button>
+                </div>
+            `;
+            document.getElementById("adminEditArea").innerHTML = html;
+            document.getElementById("adminEditArea").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function saveNewScore(name) {
+            let newVal = parseInt(document.getElementById("newScoreInput").value);
+            if (isNaN(newVal) || newVal < 0 || newVal > quizQuestions.length) { alert("من فضلك اكتب درجة صحيحة."); return; }
+            let scores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+            scores[name] = newVal;
+            localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scores));
+            alert("تم تعديل وحفظ الدرجة بنجاح!");
+            loadAdminData();
+        }
+
+        function openAnswersEditor(name) {
+            let answers = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_answers")) || {};
+            let servantAns = answers[name] || {};
+            
+            let html = `
+                <div class="admin-modal">
+                    <h4 style="color:var(--coptic-maroon); margin-bottom:15px;">مراجعة وتعديل إجابات الخادم: ${name}</h4>
+                    <div style="max-height: 300px; overflow-y: auto; text-align: right; margin-bottom: 15px; padding-left: 5px;">
+            `;
+            
+            quizQuestions.forEach((q, idx) => {
+                let currentSavedAns = servantAns[idx] ? servantAns[idx].trim() : "";
+                html += `
+                    <div style="background:#FFF; padding:10px; border-radius:6px; margin-bottom:10px; border:1px solid #DDD;">
+                        <p style="font-weight:bold; font-size:13px; color:var(--text-dark);">${idx+1}) ${q.question}</p>
+                        <p style="font-size:12px; color:#666; margin:3px 0;">الاجابة الصحيحة النموذجية: <span style="color:var(--success); font-weight:bold;">${q.answer}</span></p>
+                        <label style="font-size:12px; font-weight:bold; color:var(--coptic-maroon);">تعديل إجابة الخادم إلى:</label>
+                        <select id="editAnsSelect_${idx}" style="padding:6px; margin-top:5px; margin-bottom:5px; font-size:13px;">
+                            <option value="لم يحل" ${currentSavedAns===''?'selected':''}>-- لم يحل --</option>
+                            <option value="${q.option1}" ${currentSavedAns===q.option1?'selected':''}>${q.option1}</option>
+                            <option value="${q.option2}" ${currentSavedAns===q.option2?'selected':''}>${q.option2}</option>
+                            <option value="${q.option3}" ${currentSavedAns===q.option3?'selected':''}>${q.option3}</option>
+                            <option value="${q.option4}" ${currentSavedAns===q.option4?'selected':''}>${q.option4}</option>
+                        </select>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                    <button class="main-btn" style="padding:10px; font-size:14px; background:var(--success);" onclick="saveEditedAnswers('${name}')">تحديث الإجابات وإعادة احتساب الدرجة 🔄</button>
+                </div>
+            `;
+            document.getElementById("adminEditArea").innerHTML = html;
+            document.getElementById("adminEditArea").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function saveEditedAnswers(name) {
+            let answers = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_answers")) || {};
+            let scores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+            let servantAns = {};
+            let calculatedScore = 0;
+            
+            quizQuestions.forEach((q, idx) => {
+                let selectElem = document.getElementById(`editAnsSelect_${idx}`);
+                let val = selectElem.value;
+                servantAns[idx] = val;
+                if (val.trim() === q.answer.trim()) { calculatedScore++; }
+            });
+            
+            answers[name] = servantAns; scores[name] = calculatedScore;
+            localStorage.setItem(DAILY_QUIZ_ID + "_answers", JSON.stringify(answers));
+            localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scores));
+            
+            alert(`تم تحديث الإجابات بنجاح! النتيجة الجديدة هي: ${calculatedScore} من ${quizQuestions.length}`);
+            loadAdminData();
+        }
+
+        // الدالة العبقرية الجديدة والمدمجة لسحب وحفظ البيانات كملف إكسيل منسق وملون فوراً
+        function downloadExcelReport() {
+            let scores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+            let times = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_times")) || {};
+            
+            // 1. بناء مصفوفة البيانات باللغة العربية والترتيب المسلسل
+            let excelData = [];
+            let rowNum = 1;
+            
+            for (let name in scores) {
+                excelData.push({
+                    "م": rowNum,
+                    "اسم الخادم": name,
+                    "الدرجة الكلية": `${scores[name]} / ${quizQuestions.length}`,
+                    "وقت تسجيل الدخول": times[name] || '--',
+                    "حالة التدقيق": "تمت المسابقة بنجاح"
+                });
+                rowNum++;
+            }
+            
+            if (excelData.length === 0) {
+                alert("⚠️ لا توجد أي بيانات أو درجات مسجلة اليوم حتى الآن لتصديرها.");
+                return;
+            }
+            
+            // 2. تحويل البيانات إلى شيت إكسيل مستقل باستخدام مكتبة XLSX
+            let worksheet = XLSX.utils.json_to_sheet(excelData);
+            let workbook = XLSX.utils.book_new();
+            
+            // تحديد اتجاه الصفحة من اليمين لليسار عشان العربي يظهر مظبوط ومثالي
+            worksheet['!dir'] = "rtl";
+            
+            // ضبط حجم الأعمدة ديناميكياً عشان مفيش كلام يتقطع أو يظهر رموز ###
+            worksheet['!cols'] = [
+                { wch: 6 },  // عمود المسلسل
+                { wch: 26 }, // عمود اسم الخادم
+                { wch: 15 }, // عمود الدرجة
+                { wch: 18 }, // عمود وقت الدخول
+                { wch: 20 }  // عمود الحالة
+            ];
+            
+            XLSX.utils.book_append_sheet(workbook, worksheet, "نتائج الخدام اليومية");
+            
+            // 3. تحميل الملف فوراً على جهازك بصيغة XLSX
+            let fileName = `تقرير_مسابقة_أبي_سيفين_${todayDate}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
         }
     </script>
 </body>
