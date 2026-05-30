@@ -108,7 +108,7 @@
             <div class="study-buttons-row">
                 <div class="study-card" onclick="switchPage('readChapterPage')">
                     <div class="study-card-title">📖 اقرأ الأصحاح اليومي</div>
-                    <div class="study-card-sub">اضغط لقراءة النص كاملاً</div>
+                    <div class="study-card-sub">اضغط لقراءة النص كاملاً والاستماع إليه</div>
                 </div>
             </div>
 
@@ -140,7 +140,7 @@
                 <option value="سماح حلمي">سماح حلمي</option>
                 <option value="سماح نعيم">سماح نعيم</option>
                 <option value="سمير زكي">سمير زكي</option>
-                <option value="سناء سعيد">سناء سعيد</option>
+                <option value="sناء سعيد">سناء سعيد</option>
                 <option value="شريف شهدي">شريف شهدي</option>
                 <option value="شكرالله نصر">شكرالله نصر</option>
                 <option value="شيري شهدي">شيري شهدي</option>
@@ -230,7 +230,7 @@
         <div id="quizPage" class="page">
             <div class="quiz-header">
                 <span id="questionCounter">تحضير الأسئلة...</span>
-                <span class="timer-box">الوقت المتبقي: <span id="timeLeft">03:00</span></span>
+                <span class="timer-box">الوقت المتبقي: <span id="timeLeft">00:00</span></span>
             </div>
             <div class="progress-container">
                 <div id="progressBar" class="progress-bar"></div>
@@ -291,13 +291,9 @@
     </div>
 
     <script>
-        // الرابط الأساسي لجوجل شيت المنشور كـ CSV
-        const BASE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv"; 
-        
-        // تعديل روابط الاستدعاء لفصل شيت الأسئلة (gid=0) عن شيت الأصحاح الثاني (gid=861118671 أو اسم الصفحة)
-        // عشان نضمن الدقة، بننادي كل شيت بالـ gid بتاعه من جوجل
-        const QUESTIONS_URL = BASE_CSV_URL + "&gid=0";
-        const CHAPTER_URL = BASE_CSV_URL + "&gid=861118671"; // ملحوظة: لو غيرت الصفحة يفضل تجيب رقم الـ gid من عنوان الرابط فوق في الشيت عندك وتستبدله هنا لو واجهتك مشكلة، أو بنسحب الشيت كاملاً.
+        // الروابط المباشرة الصحيحة والمفصولة تماماً لكل صفحة شيت بناءً على الـ gid والاسم
+        const QUESTIONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv&gid=0";
+        const CHAPTER_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv&sheet=Sheet2";
         
         const SERVANT_PASSWORDS = {
             "ايريني سمير": "1", "ايريني عاطف": "2", "امال سامي": "3", "ثناء زكريا": "4", "جاكلين سعيد": "5",
@@ -320,8 +316,8 @@
         const DAILY_QUIZ_ID = "quiz_day_" + todayDate;
         const ADMIN_PASSWORD = "284655";
 
-        let quizQuestions = []; let bibleChapterText = "جاري تحميل نص الأصحاح من الشيت الثاني...";
-        let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 120;
+        let quizQuestions = []; let bibleChapterText = "جاري سحب نص الأصحاح من الشيت الثاني...";
+        let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 0;
         let userAnswers = {}; let currentEditingServant = ""; 
         let currentUtterance = null; 
 
@@ -394,54 +390,49 @@
             return lines;
         }
 
-        // دالة ذكية ومحدثة لجلب البيانات من الشيتين بالتوازي وبسرعة تامة
         async function fetchAllData() {
             try {
-                // 1. جلب الأسئلة من الشيت الأول (أو الرابط الأساسي للجدول)
-                let qResponse = await fetch(BASE_CSV_URL); 
-                if (!qResponse.ok) throw new Error("فشل جلب ملف الأسئلة");
+                // 1. جلب الأسئلة من شيت 1 واضحة ومباشرة
+                let qResponse = await fetch(QUESTIONS_URL);
+                if (!qResponse.ok) throw new Error("فشل اتصال شيت الأسئلة");
                 let qText = await qResponse.text();
                 let parsedQuestions = parseCSV(qText);
                 
-                if (parsedQuestions.length > 1) {
-                    quizQuestions = [];
-                    for (let i = 1; i < parsedQuestions.length; i++) {
-                        let r = parsedQuestions[i];
-                        if (r.length >= 2 && r[0] && r[0].trim() !== "") {
-                            let cellCheck = r[0].trim();
-                            if (cellCheck.includes("const") || cellCheck.includes("CSV_URL") || cellCheck.startsWith("/") || cellCheck.includes("http") || cellCheck === "") {
-                                continue; 
-                            }
-                            quizQuestions.push({
-                                question: r[0].trim(),
-                                option1: r[1] ? r[1].trim() : "",
-                                option2: r[2] ? r[2].trim() : "",
-                                option3: r[3] ? r[3].trim() : "",
-                                option4: r[4] ? r[4].trim() : "",
-                                answer: r[5] ? r[5].trim() : ""
-                            });
+                quizQuestions = [];
+                for (let i = 1; i < parsedQuestions.length; i++) {
+                    let r = parsedQuestions[i];
+                    if (r.length >= 2 && r[0] && r[0].trim() !== "") {
+                        let cellCheck = r[0].trim();
+                        if (cellCheck.includes("const") || cellCheck.includes("CSV_URL") || cellCheck.startsWith("/") || cellCheck.includes("http") || cellCheck === "") {
+                            continue; 
                         }
+                        quizQuestions.push({
+                            question: r[0].trim(),
+                            option1: r[1] ? r[1].trim() : "",
+                            option2: r[2] ? r[2].trim() : "",
+                            option3: r[3] ? r[3].trim() : "",
+                            option4: r[4] ? r[4].trim() : "",
+                            answer: r[5] ? r[5].trim() : ""
+                        });
                     }
                 }
 
-                // 2. محاولة جلب نص الأصحاح من الصفحة الثانية الذكية
+                // 2. جلب نص الأصحاح من شيت 2 المستقل
                 try {
-                    // نقوم باستدعاء الرابط المضاف إليه رمز الصفحة الثانية تيسيراً للفصل التام
-                    let chResponse = await fetch(BASE_CSV_URL + "&sheet=Sheet2"); 
+                    let chResponse = await fetch(CHAPTER_URL);
                     if(chResponse.ok) {
                         let chText = await chResponse.text();
                         let parsedChapter = parseCSV(chText);
-                        if(parsedChapter.length > 0 && parsedChapter[0][0]) {
+                        if(parsedChapter.length > 0 && parsedChapter[0][0] && parsedChapter[0][0].trim() !== "") {
                             bibleChapterText = parsedChapter[0][0].trim();
-                        } else if (parsedChapter.length > 1 && parsedChapter[1][0]) {
+                        } else if (parsedChapter.length > 1 && parsedChapter[1][0] && parsedChapter[1][0].trim() !== "") {
                             bibleChapterText = parsedChapter[1][0].trim();
                         } else {
-                            bibleChapterText = "نص الأصحاح فارغ داخل الشيت الثاني (الخلية A1).";
+                            bibleChapterText = "نص الأصحاح فارغ؛ يرجى كتابته في شيت 2 داخل الخلية الأولى A1.";
                         }
                     }
                 } catch(e) {
-                    console.log("تنبيه: تعذر جلب الشيت الثاني كصفحة منفصلة، جاري التحقق التلقائي.");
-                    bibleChapterText = "يرجى التأكد من كتابة الأصحاح داخل الشيت الثاني في الخلية A1 ونشر الجدول بالكامل.";
+                    bibleChapterText = "تنبيه: تعذر سحب النص، تأكد من كتابة الأصحاح داخل شيت 2 وإتمام النشر للمستند بأكمله.";
                 }
                 
                 document.getElementById("chapterTextContainer").innerText = bibleChapterText;
@@ -449,12 +440,12 @@
                 if (quizQuestions.length > 0) { 
                     switchPage("loginPage"); 
                 } else { 
-                    document.getElementById("globalStatus").innerText = "⚠️ خطأ: لم يتم العثور على أسئلة داخل الشيت الأول."; 
+                    document.getElementById("globalStatus").innerText = "⚠️ خطأ: لم يتم العثور على أي أسئلة صالحة داخل شيت 1."; 
                 }
 
             } catch (error) {
                 console.error(error);
-                document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ فشل الاتصال المباشر بجوجل شيت!</span><br><button class="main-btn" style="width:150px; padding:8px;" onclick="location.reload()">إعادة المحاولة 🔄</button>`;
+                document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ فشل جلب البيانات من جوجل شيت!</span><br><button class="main-btn" style="width:150px; padding:8px;" onclick="location.reload()">إعادة المحاولة 🔄</button>`;
             }
         }
         
@@ -484,11 +475,30 @@
             switchPage("quizPage"); startQuiz();
         }
 
-        function startQuiz() { currentIdx = 0; userAnswers = {}; document.getElementById("navControls").style.display = "flex"; renderQuestion(); startTimer(); }
+        // إعداد وقت المسابقة الإجمالي بناءً على عدد الأسئلة (3 دقائق لكل سؤال)
+        function startQuiz() { 
+            currentIdx = 0; 
+            userAnswers = {}; 
+            document.getElementById("navControls").style.display = "flex"; 
+            
+            // حساب الوقت الإجمالي: عدد الأسئلة * 3 دقائق * 60 ثانية
+            timeLeft = quizQuestions.length * 3 * 60; 
+            
+            renderQuestion(); 
+            startTimer(); 
+        }
 
         function startTimer() {
-            clearInterval(timerInterval); timeLeft = 120; updateTimerDisplay();
-            timerInterval = setInterval(() => { timeLeft--; updateTimerDisplay(); if (timeLeft <= 0) { clearInterval(timerInterval); alert("انتهى الوقت المحدد للمسابقة!"); finishQuiz(); } }, 1000);
+            clearInterval(timerInterval); updateTimerDisplay();
+            timerInterval = setInterval(() => { 
+                timeLeft--; 
+                updateTimerDisplay(); 
+                if (timeLeft <= 0) { 
+                    clearInterval(timerInterval); 
+                    alert("انتهى الوقت المحدد للمسابقة!"); 
+                    finishQuiz(); 
+                } 
+            }, 1000);
         }
 
         function renderQuestion() {
@@ -524,7 +534,12 @@
             } else { document.getElementById("nextBtn").style.display = "inline-block"; document.getElementById("submitBtn").style.display = "none"; }
         }
 
-        function updateTimerDisplay() { let mins = Math.floor(timeLeft / 60); let secs = timeLeft % 60; document.getElementById("timeLeft").innerText = `${mins < 10 ? "0"+mins : mins}:${secs < 10 ? "0"+secs : secs}`; }
+        function updateTimerDisplay() { 
+            let mins = Math.floor(timeLeft / 60); 
+            let secs = timeLeft % 60; 
+            document.getElementById("timeLeft").innerText = `${mins < 10 ? "0"+mins : mins}:${secs < 10 ? "0"+secs : secs}`; 
+        }
+        
         function clickOpt(qIdx, answerValue, btnEl) { userAnswers[qIdx] = answerValue; let siblingBtns = btnEl.parentElement.querySelectorAll('.btn-opt'); siblingBtns.forEach(b => b.classList.remove('selected')); btnEl.classList.add('selected'); }
         function goNext() { if (currentIdx < quizQuestions.length - 1) { currentIdx++; renderQuestion(); } }
         function goPrev() { if (currentIdx > 0) { currentIdx--; renderQuestion(); } }
