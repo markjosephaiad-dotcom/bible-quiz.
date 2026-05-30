@@ -68,16 +68,11 @@
         .review-title { margin-top: 25px; border-top: 2px dashed #E0DCD5; padding-top: 20px; color: var(--coptic-maroon); text-align: right; }
         .review-item { background: #FAF9F6; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-right: 4px solid var(--coptic-gold); text-align: right; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .review-q { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-        .review-ans { font-size: 15px; margin-top: 3px; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; margin-bottom: 20px; }
         th, td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #ddd; }
         th { background-color: var(--coptic-maroon); color: white; }
-        .admin-btn { padding: 6px 10px; font-size: 12px; background: #555; width: auto; display: inline-block; margin: 2px; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .loading-text { text-align: center; color: var(--coptic-maroon); font-weight: bold; font-style: italic; margin: 20px 0; font-size: 15px; }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); overflow-y: auto; padding-top: 50px; }
-        .modal-content { background: white; margin: auto; padding: 25px; border-radius: 12px; width: 90%; max-width: 550px; text-align: right; border: 3px solid var(--coptic-gold); }
     </style>
 </head>
 <body>
@@ -94,7 +89,7 @@
                 <img src="abusafein.jpg" alt="أبي سيفين" class="saint-img">
                 <img src="virgin.jpg" alt="السيدة العذراء" class="saint-img">
             </div>
-            <div class="loading-text" id="globalStatus">⚡ جاري تحميل الأسئلة والأصحاح اليومي بنجاح...</div>
+            <div class="loading-text" id="globalStatus">⚡ جاري جلب الأسئلة ونص الأصحاح بشكل مستقل وآمن تماماً...</div>
         </div>
 
         <div id="loginPage" class="page">
@@ -111,7 +106,7 @@
             </div>
 
             <h3>باسم الآب والابن والروح القدس الإله الواحد.. آمين</h3>
-            <p style="text-align: center; margin-bottom: 15px; font-size: 14px; color:#777;">من فضلك اختر اسمك واكتب كودك السري البسيط لبدء الامتحان:</p>
+            <p style="text-align: center; margin-bottom: 15px; font-size: 14px; color:#777;">من فضلك اختر اسمك واكتب كودك السري لبدء الامتحان:</p>
             
             <select id="servantSelect" onchange="handleNameChange()">
                 <option value="">-- اختر اسمك من هنا --</option>
@@ -169,7 +164,7 @@
                 <option value="مريان عادل">مريان عادل</option>
                 <option value="ماريانا ادورد">ماريانا ادورد</option>
                 <option value="مريم عماد">مريم عماد</option>
-                <option value="m_makram">مريم مكرم</option>
+                <option value="مريم مكرم">مريم مكرم</option>
                 <option value="منى ميشيل">منى ميشيل</option>
                 <option value="ميرفت يعقوب">ميرفت يعقوب</option>
                 <option value="ميرنا عماد">ميرنا عماد</option>
@@ -188,7 +183,7 @@
             </select>
             
             <div id="passwordArea" style="display: none;">
-                <p style="text-align: center; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: var(--coptic-maroon);">اكتب كودك السري التلقائي المخصص لك 🔑:</p>
+                <p style="text-align: center; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: var(--coptic-maroon);">اكتب كودك السري المخصص لك 🔑:</p>
                 <input type="number" id="servantPasswordInput" placeholder="اكتب رقم كودك المبسط هنا..." style="border: 2px solid var(--coptic-gold);">
             </div>
             
@@ -276,10 +271,10 @@
     </div>
 
     <script>
-        // 1. رابط التعديل الأصلي للأسئلة (تأكد من وضعه هنا بشكل صحيح)
-        const BASE_SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg";
+        // 🔗 الرابط الأول: رابط شيت الأسئلة والاجابات (بصيغة CSV الصافية والمباشرة)
+        const QUESTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/1e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv";
 
-        // 2. رابط الـ CSV الصافي للأصحاح المأخوذ من رسالتك مباشرة
+        // 🔗 الرابط الثاني: رابط شيت الأصحاح اليومي (بصيغة CSV الصافية والمباشرة)
         const CHAPTER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlHtC2XhIAwgkBPyOKvgS40OJ8JiYHt_019eGTHb9ltGaxc-oV6gT2QS924VOBSFZMv0N7d2OnzRBe/pub?output=csv";
 
         const SERVANT_PASSWORDS = {
@@ -293,7 +288,7 @@
             "فادي سليمان": "36", "فادي كحيل": "37", "فيوليت فوزي": "38", "كمال كريم": "39", "كريستين نصر": "40",
             "كريم شكرالله": "41", "كيرلس اسامه": "42", "كيرلس فادي": "43", "كيرلس يوسف": "44", "ليلي وهيب": "45",
             "ماجدة نجيب": "46", "ماركو مجدي": "47", "ماري عادل": "48", "ماري وجيه": "49", "ماريان مجدي": "50",
-            "مارينا اشرف": "51", "مريان عادل": "52", "ماريانا ادورد": "53", "مريم عماد": "54", "مريم مكرم": "55",
+            "marian_ashraf": "51", "مريان عادل": "52", "ماريانا ادورد": "53", "مريم عماد": "54", "مريم مكرم": "55",
             "منى ميشيل": "56", "ميرفت يعقوب": "57", "ميرنا عماد": "58", "مينا اشرف": "59", "مينا مجدي": "60",
             "ناهد فاروق": "61", "نرجس خير": "62", "نرمين سليمان": "63", "نعمة عبدالسيد": "64", "هيلانة جورج": "65",
             "وائل ماهر": "66", "ورده ماهر": "67", "ياسر نبيه": "68", "يوسف وليم": "69", "يوستينا رأفت": "70"
@@ -303,7 +298,7 @@
         const DAILY_QUIZ_ID = "quiz_day_" + todayDate;
         const ADMIN_PASSWORD = "284655";
 
-        let quizQuestions = []; let bibleChapterText = "جاري سحب نص الأصحاح...";
+        let quizQuestions = []; let bibleChapterText = "جاري تحميل نص الأصحاح...";
         let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 0;
         let userAnswers = {}; let currentUtterance = null; 
 
@@ -324,7 +319,7 @@
         function speakChapter() {
             if (window.speechSynthesis.paused) { window.speechSynthesis.resume(); return; }
             window.speechSynthesis.cancel();
-            if (!bibleChapterText || bibleChapterText.includes("جاري تحميل")) { alert("نص الأصحاح غير جاهز."); return; }
+            if (!bibleChapterText || bibleChapterText.includes("جاري تحميل")) { alert("نص الأصحاح غير جاهز بعد."); return; }
             currentUtterance = new SpeechSynthesisUtterance(bibleChapterText);
             currentUtterance.lang = 'ar-EG'; window.speechSynthesis.speak(currentUtterance);
         }
@@ -340,65 +335,78 @@
             } else { document.getElementById("passwordArea").style.display = "none"; }
         }
 
-        async function fetchSheetData(sheetName, query) {
-            let cleanUrl = BASE_SPREADSHEET_URL.replace(/\/edit.*$/, '');
-            let url = `${cleanUrl}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&tq=${encodeURIComponent(query)}`;
-            let response = await fetch(url);
-            let text = await response.text();
-            let jsonString = text.match(/google\.visualization\.Query\.setResponse\(([\s\S\x00-\x7F]+)\);/)[1];
-            return JSON.parse(jsonString).table.rows;
-        }
-
-        async function fetchChapterFromCSV() {
-            let res = await fetch(CHAPTER_CSV_URL);
-            let csvText = await res.text();
-            let lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-            if (lines.length > 1) {
-                return lines[1].replace(/^"|"$/g, '').replace(/""/g, '"');
-            } else if (lines.length === 1) {
-                return lines[0].replace(/^"|"$/g, '').replace(/""/g, '"');
+        // دالة مخصصة لتحويل أسطر الـ CSV المصفوفة مصفوفة مرتبة ومحمية بالكامل
+        function parseCSVLines(text) {
+            let lines = []; let row = [""]; let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let c = text[i]; let next = text[i+1];
+                if (c === '"') {
+                    if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                } else if (c === ',' && !inQuotes) {
+                    row.push('');
+                } else if ((c === '\r' || c === '\n') && !inQuotes) {
+                    if (c === '\r' && next === '\n') { i++; }
+                    lines.push(row); row = [''];
+                } else {
+                    row[row.length - 1] += c;
+                }
             }
-            return "ملف الأصحاح فارغ.";
+            if (row.length > 1 || row[0] !== '') lines.push(row);
+            return lines;
         }
 
         async function fetchAllData() {
             try {
-                let qRows = await fetchSheetData("Sheet1", "SELECT A, B, C, D, E, F");
+                // 1. جلب الأسئلة مباشرة بصيغة CSV الصافية والمستقلة
+                let qRes = await fetch(QUESTIONS_CSV_URL);
+                let qText = await qRes.text();
+                let parsedRows = parseCSVLines(qText);
+
                 quizQuestions = [];
-                qRows.forEach((row, i) => {
-                    if(i === 0) return;
-                    let c = row.c;
-                    if(c && c[0] && c[0].v) {
-                        let rawQuestion = String(c[0].v).trim();
-                        // 🛠️ فلترة ذكية جداً لحذف أي كود برمجي أو روابط زاحفة دخلت بالخطأ في نص السؤال
-                        if (rawQuestion.includes("const") || rawQuestion.includes("URL") || rawQuestion.includes("docs.google")) {
-                            return; 
-                        }
-                        quizQuestions.push({
-                            question: rawQuestion,
-                            option1: c[1] ? String(c[1].v).trim() : "",
-                            option2: c[2] ? String(c[2].v).trim() : "",
-                            option3: c[3] ? String(c[3].v).trim() : "",
-                            option4: c[4] ? String(c[4].v).trim() : "",
-                            answer: c[5] ? String(c[5].v).trim() : ""
-                        });
-                    }
+                parsedRows.forEach((cols, i) => {
+                    if (i === 0 || cols.length < 2) return; // تخطي العناوين والأسطر الفارغة
+                    
+                    let questionClean = cols[0] ? cols[0].trim() : "";
+                    
+                    // حماية صارمة لمنع تسلل أي أكواد برمجية داخل الأسئلة
+                    if (questionClean === "" || questionClean.includes("const ") || questionClean.includes("docs.google")) return;
+
+                    quizQuestions.push({
+                        question: questionClean,
+                        option1: cols[1] ? cols[1].trim() : "",
+                        option2: cols[2] ? cols[2].trim() : "",
+                        option3: cols[3] ? cols[3].trim() : "",
+                        option4: cols[4] ? cols[4].trim() : "",
+                        answer: cols[5] ? cols[5].trim() : ""
+                    });
                 });
 
+                // 2. جلب نص الأصحاح مباشرة بصيغة CSV الصافية والمستقلة
                 try {
-                    bibleChapterText = await fetchChapterFromCSV();
+                    let chRes = await fetch(CHAPTER_CSV_URL);
+                    let chText = await chRes.text();
+                    let chRows = parseCSVLines(chText);
+                    
+                    if (chRows.length > 1 && chRows[1][0]) {
+                        bibleChapterText = chRows[1][0].trim();
+                    } else if (chRows.length === 1 && chRows[0][0]) {
+                        bibleChapterText = chRows[0][0].trim();
+                    } else {
+                        bibleChapterText = "ملف نص الأصحاح فارغ، تأكد من الكتابة داخل الشيت الثاني.";
+                    }
                 } catch(e) {
-                    bibleChapterText = "تنبيه: تعذر جلب الأصحاح، تأكد من إعداد رابط الشيت الثاني.";
+                    bibleChapterText = "تنبيه: تعذر قراءة ملف الأصحاح بشكل مستقل.";
                 }
 
                 document.getElementById("chapterTextContainer").innerText = bibleChapterText;
 
                 if (quizQuestions.length > 0) { switchPage("loginPage"); }
-                else { document.getElementById("globalStatus").innerText = "⚠️ لم يتم العثور على أي أسئلة صالحة في شيت Sheet1."; }
+                else { document.getElementById("globalStatus").innerText = "⚠️ شيت الأسئلة فارغ أو لا يحتوي على بيانات صالحة حالياً."; }
 
             } catch (error) {
                 console.error(error);
-                document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ تعذر الاتصال بجوجل شيت. يرجى مراجعة الرابط.</span>`;
+                document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ تعذر الاتصال بجوجل شيت. تأكد من عمل "نشر على الويب" بصيغة CSV لكلا الرابطين.</span>`;
             }
         }
 
@@ -430,10 +438,7 @@
             document.getElementById("progressBar").style.width = `${((currentIdx + 1) / quizQuestions.length) * 100}%`;
             let currentQ = quizQuestions[currentIdx];
             
-            // تنظيف نهائي وأخير للتأكيد على عدم طباعة أي نصوص برمجية خبيثة أو نصوص طويلة غريبة
-            let cleanQuestionText = currentQ.question;
-            
-            let html = `<div class="question-text">${cleanQuestionText}</div><div class="options-vertical-wrapper">`;
+            let html = `<div class="question-text">${currentQ.question}</div><div class="options-vertical-wrapper">`;
             for(let i=1; i<=4; i++) {
                 let opt = currentQ[`option${i}`];
                 if(opt && !opt.includes("const ") && !opt.includes("docs.google")) {
