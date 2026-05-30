@@ -33,7 +33,6 @@
         .main-btn { width: 100%; background: linear-gradient(135deg, var(--coptic-maroon), #7A1717); color: var(--white); border: none; padding: 14px; font-size: 18px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.3s; margin-bottom: 10px; }
         .main-btn:hover { color: var(--coptic-gold); }
         
-        /* تصميم الـ 4 خيارات بشكل طولي تحت بعض مريح للعين */
         .options-vertical-wrapper { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; margin-bottom: 25px; }
         .btn-opt { width: 100%; padding: 14px; font-size: 16px; text-align: right; font-weight: 500; border-radius: 8px; cursor: pointer; border: 2px solid #ECE9E4; background-color: #FDFDFD; color: var(--text-dark); transition: all 0.2s; }
         .btn-opt.selected { background-color: #FFF3E0; border-color: var(--coptic-gold); color: var(--coptic-maroon); font-weight: bold; box-shadow: 0 3px 8px rgba(197, 160, 89, 0.2); }
@@ -76,7 +75,7 @@
                 <img src="abusafein.jpg" alt="أبي سيفين" class="saint-img">
                 <img src="virgin.jpg" alt="السيدة العذراء" class="saint-img">
             </div>
-            <div class="loading-text" id="globalStatus">🔄 جاري سحب أسئلة الخيارات الأربعة من شيت جوجل.. ثواني...</div>
+            <div class="loading-text" id="globalStatus">⚡ جاري سحب الأسئلة والخيارات من شيت جوجل مباشرة.. ثواني...</div>
         </div>
 
         <div id="loginPage" class="page">
@@ -119,7 +118,7 @@
             </div>
             
             <div id="quizRenderLocation"></div>
-            https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv
+
             <div class="nav-wrapper" id="navControls" style="display: none;">
                 <button class="btn-next" id="nextBtn" onclick="goNext()">الأمام ↪</button>
                 <button class="btn-prev" id="prevBtn" onclick="goPrev()" disabled>السابق ↩</button>
@@ -162,37 +161,85 @@
     </div>
 
     <script>
-        // ⚠️ ضع هنا رابط الـ Web App الجديد الخاص بك من شيت جوجل:
-        const SCRIPT_URL = "ضَع_رَابِط_الـ_WEB_APP_هُنَا"; 
+        // رابط الـ CSV المباشر والمنشور للعامة الذي أرسلته يا مارك
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv"; 
         
         let quizQuestions = []; 
         let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 120;
         let userAnswers = {}; 
         const DAILY_QUIZ_ID = "quiz_day_30_05_2026"; const ADMIN_PASSWORD = "1234";
 
-        async function fetchQuestionsFromSheet() {
-            try {
-                let response = await fetch(SCRIPT_URL, { method: "GET", redirect: "follow" });
-                if (!response.ok) throw new Error("Network response was not ok");
-                let data = await response.json();
-                
-                if(data && data.length > 0) {
-                    quizQuestions = data;
-                    switchPage("loginPage"); // الدخول التلقائي فور نجاح التحميل
+        // دالة سحب وتحليل ملف الـ CSV بدقة شديدة لمعالجة الفواصل والنصوص العربية
+        function parseCSV(text) {
+            let lines = [];
+            let row = [""];
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                let c = text[i];
+                let next = text[i+1];
+                if (c === '"') {
+                    if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                } else if (c === ',' && !inQuotes) {
+                    row.push('');
+                } else if ((c === '\r' || c === '\n') && !inQuotes) {
+                    if (c === '\r' && next === '\n') { i++; }
+                    lines.push(row);
+                    row = [''];
                 } else {
-                    document.getElementById("globalStatus").innerText = "⚠️ خطأ: الشيت فارغ أو العناوين غير صحيحة.";
+                    row[row.length - 1] += c;
+                }
+            }
+            if (row.length > 1 || row[0] !== '') { lines.push(row); }
+            return lines;
+        }
+
+        async function fetchQuestionsFromCSV() {
+            try {
+                let response = await fetch(CSV_URL);
+                if (!response.ok) throw new Error("فشل جلب ملف الـ CSV");
+                let text = await response.text();
+                
+                let parsedData = parseCSV(text);
+                
+                if (parsedData.length > 1) {
+                    quizQuestions = [];
+                    // تخطي السطر الأول الخاص بالعناوين وقرأة البيانات
+                    for (let i = 1; i < parsedData.length; i++) {
+                        let r = parsedData[i];
+                        if (r.length >= 6 && r[0].trim() !== "") {
+                            quizQuestions.push({
+                                question: r[0].trim(),
+                                option1: r[1].trim(),
+                                option2: r[2].trim(),
+                                option3: r[3].trim(),
+                                option4: r[4].trim(),
+                                answer: r[5].trim()
+                            });
+                        }
+                    }
+                    
+                    if (quizQuestions.length > 0) {
+                        switchPage("loginPage"); // تم التحميل بنجاح! اخفي شاشة الانتظار وافتح الموقع فوراً
+                    } else {
+                        document.getElementById("globalStatus").innerText = "⚠️ خطأ: لم يتم العثور على أسئلة داخل ملف الـ CSV.";
+                    }
+                } else {
+                    document.getElementById("globalStatus").innerText = "⚠️ خطأ: الشيت فارغ أو غير منسق.";
                 }
             } catch (error) {
                 console.error(error);
                 document.getElementById("globalStatus").innerHTML = `
-                    <span style="color:var(--error);">⚠️ فشل الاتصال التلقائي بشيت جوجل!</span><br>
-                    <span style="font-size:13px; color:#555; font-weight:normal;">تأكد من عمل Deploy بوضع (Anyone) وحط الرابط في السطر 122.</span><br><br>
+                    <span style="color:var(--error);">⚠️ فشل الاتصال المباشر بجوجل شيت!</span><br>
+                    <span style="font-size:13px; color:#555; font-weight:normal;">تأكد من أنك لم تقم بإلغاء نشر الشيت، أو أعد تحميل الصفحة.</span><br><br>
                     <button class="main-btn" style="width:150px; padding:8px; font-size:14px;" onclick="location.reload()">إعادة المحاولة 🔄</button>
                 `;
             }
         }
         
-        window.addEventListener("DOMContentLoaded", fetchQuestionsFromSheet);
+        // جلب الأسئلة فوراً عند تحميل الصفحة
+        window.addEventListener("DOMContentLoaded", fetchQuestionsFromCSV);
 
         function attemptLogin() {
             selectedServant = document.getElementById("servantSelect").value;
@@ -217,7 +264,6 @@
 
             let currentQ = quizQuestions[currentIdx];
             
-            // تحديد أي من الخيارات الأربعة تم اختياره مسبقاً
             let s1 = (userAnswers[currentIdx] === currentQ.option1) ? "selected" : "";
             let s2 = (userAnswers[currentIdx] === currentQ.option2) ? "selected" : "";
             let s3 = (userAnswers[currentIdx] === currentQ.option3) ? "selected" : "";
