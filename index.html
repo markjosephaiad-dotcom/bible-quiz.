@@ -37,6 +37,7 @@
         .btn-opt { width: 100%; padding: 14px; font-size: 16px; text-align: right; font-weight: 500; border-radius: 8px; cursor: pointer; border: 2px solid #ECE9E4; background-color: #FDFDFD; color: var(--text-dark); transition: all 0.2s; }
         .btn-opt.selected { background-color: #FFF3E0; border-color: var(--coptic-gold); color: var(--coptic-maroon); font-weight: bold; box-shadow: 0 3px 8px rgba(197, 160, 89, 0.2); }
 
+        /* شريط التنقل المتطور: الأمام يمين والسابق شمال بالملي */
         .nav-wrapper { display: flex; gap: 15px; justify-content: space-between; margin-top: 10px; border-top: 1px dashed #ECE9E4; padding-top: 15px; flex-direction: row; }
         .btn-prev { background: #757575; color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; order: 2; }
         .btn-next { background: var(--coptic-maroon); color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; order: 1; }
@@ -174,7 +175,8 @@
     </div>
 
     <script>
-       
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv"; 
+        
         let quizQuestions = []; 
         let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 120;
         let userAnswers = {}; 
@@ -203,14 +205,17 @@
                 
                 if (parsedData.length > 1) {
                     quizQuestions = [];
+                    // بنبدأ من السطر رقم 1 لتخطي سطر العناوين (السؤال، الاختيار 1...)
                     for (let i = 1; i < parsedData.length; i++) {
                         let r = parsedData[i];
-                        if (r.length >= 6 && r[0] && r[0].trim() !== "") {
+                        if (r.length >= 2 && r[0] && r[0].trim() !== "") {
                             let cellCheck = r[0].trim();
-                            // فلترة ذكية: تجاهل السطور البرمجية الزائدة أو السطور الفاضية تماماً
-                            if (cellCheck.includes("const") || cellCheck.includes("CSV_URL") || cellCheck.startsWith("/") || cellCheck.includes("http")) {
+                            
+                            // نظام الفلترة الذكي: لو السطر يحتوي على أكواد أو روابط أو فاضي بيتم تجاهله فوراً
+                            if (cellCheck.includes("const") || cellCheck.includes("CSV_URL") || cellCheck.startsWith("/") || cellCheck.includes("http") || cellCheck === "") {
                                 continue; 
                             }
+                            
                             quizQuestions.push({
                                 question: r[0].trim(),
                                 option1: r[1] ? r[1].trim() : "",
@@ -221,6 +226,8 @@
                             });
                         }
                     }
+                    
+                    // تشغيل الموقع فوراً بمجرد تصفية الأسئلة بنجاح
                     if (quizQuestions.length > 0) { 
                         switchPage("loginPage"); 
                     } else { 
@@ -258,20 +265,20 @@
             
             let html = `<div class="question-text">${currentQ.question}</div><div class="options-vertical-wrapper">`;
             
-            // عرض الاختيارات المتوفرة فقط (لو صح وخطأ يعرض اتنين بس وميعملش زراير فاضية)
-            if (currentQ.option1) {
+            // عرض الاختيارات المليانة فقط (لو صح وخطأ يعرض زرارين بس وميظهرش زراير فاضية)
+            if (currentQ.option1 && currentQ.option1.trim() !== "") {
                 let s1 = (userAnswers[currentIdx] === currentQ.option1) ? "selected" : "";
                 html += `<button class="btn-opt ${s1}" onclick="clickOpt(${currentIdx}, '${currentQ.option1.replace(/'/g, "\\'")}', this)">${currentQ.option1}</button>`;
             }
-            if (currentQ.option2) {
+            if (currentQ.option2 && currentQ.option2.trim() !== "") {
                 let s2 = (userAnswers[currentIdx] === currentQ.option2) ? "selected" : "";
                 html += `<button class="btn-opt ${s2}" onclick="clickOpt(${currentIdx}, '${currentQ.option2.replace(/'/g, "\\'")}', this)">${currentQ.option2}</button>`;
             }
-            if (currentQ.option3) {
+            if (currentQ.option3 && currentQ.option3.trim() !== "") {
                 let s3 = (userAnswers[currentIdx] === currentQ.option3) ? "selected" : "";
                 html += `<button class="btn-opt ${s3}" onclick="clickOpt(${currentIdx}, '${currentQ.option3.replace(/'/g, "\\'")}', this)">${currentQ.option3}</button>`;
             }
-            if (currentQ.option4) {
+            if (currentQ.option4 && currentQ.option4.trim() !== "") {
                 let s4 = (userAnswers[currentIdx] === currentQ.option4) ? "selected" : "";
                 html += `<button class="btn-opt ${s4}" onclick="clickOpt(${currentIdx}, '${currentQ.option4.replace(/'/g, "\\'")}', this)">${currentQ.option4}</button>`;
             }
