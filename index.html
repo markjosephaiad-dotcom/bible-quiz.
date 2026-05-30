@@ -37,7 +37,6 @@
         .btn-opt { width: 100%; padding: 14px; font-size: 16px; text-align: right; font-weight: 500; border-radius: 8px; cursor: pointer; border: 2px solid #ECE9E4; background-color: #FDFDFD; color: var(--text-dark); transition: all 0.2s; }
         .btn-opt.selected { background-color: #FFF3E0; border-color: var(--coptic-gold); color: var(--coptic-maroon); font-weight: bold; box-shadow: 0 3px 8px rgba(197, 160, 89, 0.2); }
 
-        /* شريط أزرار التنقل - تم ضبط التوزيع ليكون الأمام يمين والسابق شمال بدقة */
         .nav-wrapper { display: flex; gap: 15px; justify-content: space-between; margin-top: 10px; border-top: 1px dashed #ECE9E4; padding-top: 15px; flex-direction: row; }
         .btn-prev { background: #757575; color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; order: 2; }
         .btn-next { background: var(--coptic-maroon); color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; order: 1; }
@@ -202,23 +201,32 @@
                 if (!response.ok) throw new Error("فشل جلب ملف الـ CSV");
                 let text = await response.text();
                 let parsedData = parseCSV(text);
+                
                 if (parsedData.length > 1) {
                     quizQuestions = [];
                     for (let i = 1; i < parsedData.length; i++) {
                         let r = parsedData[i];
-                        if (r.length >= 6 && r[0].trim() !== "") {
+                        if (r.length >= 6 && r[0] && r[0].trim() !== "") {
+                            let cellCheck = r[0].trim();
+                            // فلترة ذكية: تجاهل السطور البرمجية الزائدة أو السطور الفاضية تماماً
+                            if (cellCheck.includes("const") || cellCheck.includes("CSV_URL") || cellCheck.startsWith("/") || cellCheck.includes("http")) {
+                                continue; 
+                            }
                             quizQuestions.push({
                                 question: r[0].trim(),
-                                option1: r[1].trim(),
-                                option2: r[2].trim(),
-                                option3: r[3].trim(),
-                                option4: r[4].trim(),
-                                answer: r[5].trim()
+                                option1: r[1] ? r[1].trim() : "",
+                                option2: r[2] ? r[2].trim() : "",
+                                option3: r[3] ? r[3].trim() : "",
+                                option4: r[4] ? r[4].trim() : "",
+                                answer: r[5] ? r[5].trim() : ""
                             });
                         }
                     }
-                    if (quizQuestions.length > 0) { switchPage("loginPage"); }
-                    else { document.getElementById("globalStatus").innerText = "⚠️ خطأ: لم يتم العثور على أسئلة داخل الشيت."; }
+                    if (quizQuestions.length > 0) { 
+                        switchPage("loginPage"); 
+                    } else { 
+                        document.getElementById("globalStatus").innerText = "⚠️ خطأ: لم يتم العثور على أسئلة صالحة داخل الشيت."; 
+                    }
                 }
             } catch (error) {
                 console.error(error);
@@ -248,20 +256,28 @@
             document.getElementById("questionCounter").innerText = `السؤال ${currentIdx + 1} من ${quizQuestions.length}`;
             document.getElementById("progressBar").style.width = `${((currentIdx + 1) / quizQuestions.length) * 100}%`;
             let currentQ = quizQuestions[currentIdx];
-            let s1 = (userAnswers[currentIdx] === currentQ.option1) ? "selected" : "";
-            let s2 = (userAnswers[currentIdx] === currentQ.option2) ? "selected" : "";
-            let s3 = (userAnswers[currentIdx] === currentQ.option3) ? "selected" : "";
-            let s4 = (userAnswers[currentIdx] === currentQ.option4) ? "selected" : "";
-
-            let html = `
-                <div class="question-text">${currentQ.question}</div>
-                <div class="options-vertical-wrapper">
-                    <button class="btn-opt ${s1}" onclick="clickOpt(${currentIdx}, '${currentQ.option1.replace(/'/g, "\\'")}', this)">${currentQ.option1}</button>
-                    <button class="btn-opt ${s2}" onclick="clickOpt(${currentIdx}, '${currentQ.option2.replace(/'/g, "\\'")}', this)">${currentQ.option2}</button>
-                    <button class="btn-opt ${s3}" onclick="clickOpt(${currentIdx}, '${currentQ.option3.replace(/'/g, "\\'")}', this)">${currentQ.option3}</button>
-                    <button class="btn-opt ${s4}" onclick="clickOpt(${currentIdx}, '${currentQ.option4.replace(/'/g, "\\'")}', this)">${currentQ.option4}</button>
-                </div>
-            `;
+            
+            let html = `<div class="question-text">${currentQ.question}</div><div class="options-vertical-wrapper">`;
+            
+            // عرض الاختيارات المتوفرة فقط (لو صح وخطأ يعرض اتنين بس وميعملش زراير فاضية)
+            if (currentQ.option1) {
+                let s1 = (userAnswers[currentIdx] === currentQ.option1) ? "selected" : "";
+                html += `<button class="btn-opt ${s1}" onclick="clickOpt(${currentIdx}, '${currentQ.option1.replace(/'/g, "\\'")}', this)">${currentQ.option1}</button>`;
+            }
+            if (currentQ.option2) {
+                let s2 = (userAnswers[currentIdx] === currentQ.option2) ? "selected" : "";
+                html += `<button class="btn-opt ${s2}" onclick="clickOpt(${currentIdx}, '${currentQ.option2.replace(/'/g, "\\'")}', this)">${currentQ.option2}</button>`;
+            }
+            if (currentQ.option3) {
+                let s3 = (userAnswers[currentIdx] === currentQ.option3) ? "selected" : "";
+                html += `<button class="btn-opt ${s3}" onclick="clickOpt(${currentIdx}, '${currentQ.option3.replace(/'/g, "\\'")}', this)">${currentQ.option3}</button>`;
+            }
+            if (currentQ.option4) {
+                let s4 = (userAnswers[currentIdx] === currentQ.option4) ? "selected" : "";
+                html += `<button class="btn-opt ${s4}" onclick="clickOpt(${currentIdx}, '${currentQ.option4.replace(/'/g, "\\'")}', this)">${currentQ.option4}</button>`;
+            }
+            
+            html += `</div>`;
             document.getElementById("quizRenderLocation").innerHTML = html;
             document.getElementById("prevBtn").disabled = (currentIdx === 0);
             if (currentIdx === quizQuestions.length - 1) {
@@ -355,10 +371,10 @@
                         <p style="font-size:12px; color:var(--success);">الإجابة الصحيحة النموذجية: ${q.answer}</p>
                         <select id="edit_q_select_${idx}" class="edit-select">
                             <option value="لم يحل" ${currentChosen === 'لم يحل' ? 'selected' : ''}>-- لم يحل --</option>
-                            <option value="${q.option1}" ${currentChosen === q.option1 ? 'selected' : ''}>${q.option1}</option>
-                            <option value="${q.option2}" ${currentChosen === q.option2 ? 'selected' : ''}>${q.option2}</option>
-                            <option value="${q.option3}" ${currentChosen === q.option3 ? 'selected' : ''}>${q.option3}</option>
-                            <option value="${q.option4}" ${currentChosen === q.option4 ? 'selected' : ''}>${q.option4}</option>
+                            ${q.option1 ? `<option value="${q.option1}" ${currentChosen === q.option1 ? 'selected' : ''}>${q.option1}</option>` : ''}
+                            ${q.option2 ? `<option value="${q.option2}" ${currentChosen === q.option2 ? 'selected' : ''}>${q.option2}</option>` : ''}
+                            ${q.option3 ? `<option value="${q.option3}" ${currentChosen === q.option3 ? 'selected' : ''}>${q.option3}</option>` : ''}
+                            ${q.option4 ? `<option value="${q.option4}" ${currentChosen === q.option4 ? 'selected' : ''}>${q.option4}</option>` : ''}
                         </select>
                     </div>
                 `;
