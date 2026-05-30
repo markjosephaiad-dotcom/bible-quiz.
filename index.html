@@ -137,10 +137,10 @@
                 <option value="ساندرا جورج">ساندرا جورج</option>
                 <option value="سامية جريس">سامية جريس</option>
                 <option value="سمر جادالرب">سمر جادالرب</option>
-                <option value="سماح حلمي">سماح حلمي</option>
+                <option value="sماح حلمي">سماح حلمي</option>
                 <option value="سماح نعيم">سماح نعيم</option>
                 <option value="سمير زكي">سمير زكي</option>
-                <option value="sناء سعيد">سناء سعيد</option>
+                <option value="سناء سعيد">سناء سعيد</option>
                 <option value="شريف شهدي">شريف شهدي</option>
                 <option value="شكرالله نصر">شكرالله نصر</option>
                 <option value="شيري شهدي">شيري شهدي</option>
@@ -201,7 +201,7 @@
             </p>
         </div>
 
-        <div id="readChapterPage" class="page"2>
+        <div id="readChapterPage" class="page">
             <h3>📖 قراءة وسماع الأصحاح اليومي</h3>
             
             <div class="audio-wrapper">
@@ -214,7 +214,7 @@
             </div>
 
             <div class="chapter-box" id="chapterTextContainer">
-                جاري تحميل نص الأصحاح من الاصحاح...
+                جاري تحميل نص الأصحاح من 560282279...
             </div>
 
             <button class="main-btn" onclick="exitChapterPage()" style="background: var(--coptic-dark);">العودة لصفحة الدخول والامتحان</button>
@@ -291,9 +291,11 @@
     </div>
 
     <script>
-        // الروابط المباشرة الصحيحة والمفصولة تماماً لكل صفحة شيت بناءً على الـ gid والاسم
+        // الروابط المباشرة الصحيحة والمعزولة بالـ gid
         const QUESTIONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv&gid=0";
-        const CHAPTER_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv&sheet=Sheet2";
+        
+        // ⚠️ استبدل كلمة (هنا_اكتب_رقم_الشيت_التاني) بالرقم اللي هتحصل عليه من المتصفح
+        const CHAPTER_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv&gid=هنا_اكتب_رقم_الشيت_التاني";
         
         const SERVANT_PASSWORDS = {
             "ايريني سمير": "1", "ايريني عاطف": "2", "امال سامي": "3", "ثناء زكريا": "4", "جاكلين سعيد": "5",
@@ -392,7 +394,6 @@
 
         async function fetchAllData() {
             try {
-                // 1. جلب الأسئلة من شيت 1 واضحة ومباشرة
                 let qResponse = await fetch(QUESTIONS_URL);
                 if (!qResponse.ok) throw new Error("فشل اتصال شيت الأسئلة");
                 let qText = await qResponse.text();
@@ -417,7 +418,6 @@
                     }
                 }
 
-                // 2. جلب نص الأصحاح من شيت 2 المستقل
                 try {
                     let chResponse = await fetch(CHAPTER_URL);
                     if(chResponse.ok) {
@@ -432,7 +432,7 @@
                         }
                     }
                 } catch(e) {
-                    bibleChapterText = "تنبيه: تعذر سحب النص، تأكد من كتابة الأصحاح داخل شيت 2 وإتمام النشر للمستند بأكمله.";
+                    bibleChapterText = "تنبيه: تعذر سحب النص، تأكد من كتابة الأصحاح داخل شيت 2 وإتمام النشر للمستند بأكمله واستخدام الـ gid الصحيح.";
                 }
                 
                 document.getElementById("chapterTextContainer").innerText = bibleChapterText;
@@ -475,15 +475,11 @@
             switchPage("quizPage"); startQuiz();
         }
 
-        // إعداد وقت المسابقة الإجمالي بناءً على عدد الأسئلة (3 دقائق لكل سؤال)
         function startQuiz() { 
             currentIdx = 0; 
             userAnswers = {}; 
             document.getElementById("navControls").style.display = "flex"; 
-            
-            // حساب الوقت الإجمالي: عدد الأسئلة * 3 دقائق * 60 ثانية
             timeLeft = quizQuestions.length * 3 * 60; 
-            
             renderQuestion(); 
             startTimer(); 
         }
