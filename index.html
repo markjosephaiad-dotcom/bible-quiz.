@@ -116,7 +116,7 @@
                 <option value="ثناء زكريا">ثناء زكريا</option>
                 <option value="جاكلين سعيد">جاكلين سعيد</option>
                 <option value="جانيت ويصا">جانيت ويصا</option>
-                <option value="جورج فايز">جورج فايز</option>
+                <option value="جورج فايz">جورج فايز</option>
                 <option value="جمال حنا">جمال حنا</option>
                 <option value="جيرمين زاهر">جيرمين زاهر</option>
                 <option value="جيهان شحاتة">جيهان شحاتة</option>
@@ -152,7 +152,7 @@
                 <option value="كريستين نصر">كريستين نصر</option>
                 <option value="كريم شكرالله">كريم شكرالله</option>
                 <option value="كيرلس اسامه">كيرلس اسامه</option>
-                <option value="كيرلس فادي">كيرلس فادي</option>
+                <option value="k_fady">كيرلس فادي</option>
                 <option value="كيرلس يوسف">كيرلس يوسف</option>
                 <option value="ليلي وهيب">ليلي وهيب</option>
                 <option value="ماجدة نجيب">ماجدة نجيب</option>
@@ -271,10 +271,10 @@
     </div>
 
     <script>
-        // 🔗 الرابط الأول: رابط شيت الأسئلة والاجابات (بصيغة CSV الصافية والمباشرة)
+        // 🔗 الرابط الأول: رابط شيت الأسئلة والاجابات (بصيغة CSV الناتجة من النشر على الويب)
         const QUESTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv";
 
-        // 🔗 الرابط الثاني: رابط شيت الأصحاح اليومي (بصيغة CSV الصافية والمباشرة)
+        // 🔗 الرابط الثاني: رابط شيت الأصحاح اليومي (بصيغة CSV الناتجة من النشر على الويب)
         const CHAPTER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlHtC2XhIAwgkBPyOKvgS40OJ8JiYHt_019eGTHb9ltGaxc-oV6gT2QS924VOBSFZMv0N7d2OnzRBe/pub?output=csv";
 
         const SERVANT_PASSWORDS = {
@@ -288,7 +288,7 @@
             "فادي سليمان": "36", "فادي كحيل": "37", "فيوليت فوزي": "38", "كمال كريم": "39", "كريستين نصر": "40",
             "كريم شكرالله": "41", "كيرلس اسامه": "42", "كيرلس فادي": "43", "كيرلس يوسف": "44", "ليلي وهيب": "45",
             "ماجدة نجيب": "46", "ماركو مجدي": "47", "ماري عادل": "48", "ماري وجيه": "49", "ماريان مجدي": "50",
-            "marian_ashraf": "51", "مريان عادل": "52", "ماريانا ادورد": "53", "مريم عماد": "54", "مريم مكرم": "55",
+            "مارينا اشرف": "51", "مريان عادل": "52", "ماريانا ادورد": "53", "مريم عماد": "54", "مريم مكرم": "55",
             "منى ميشيل": "56", "ميرفت يعقوب": "57", "ميرنا عماد": "58", "مينا اشرف": "59", "مينا مجدي": "60",
             "ناهد فاروق": "61", "نرجس خير": "62", "نرمين سليمان": "63", "نعمة عبدالسيد": "64", "هيلانة جورج": "65",
             "وائل ماهر": "66", "ورده ماهر": "67", "ياسر نبيه": "68", "يوسف وليم": "69", "يوستينا رأفت": "70"
@@ -317,14 +317,49 @@
         function exitChapterPage() { stopSpeaking(); goToHome(); }
 
         function speakChapter() {
-            if (window.speechSynthesis.paused) { window.speechSynthesis.resume(); return; }
+            if (window.speechSynthesis.paused) { 
+                window.speechSynthesis.resume(); 
+                return; 
+            }
             window.speechSynthesis.cancel();
-            if (!bibleChapterText || bibleChapterText.includes("جاري تحميل")) { alert("نص الأصحاح غير جاهز بعد."); return; }
+            
+            if (!bibleChapterText || bibleChapterText.includes("جاري تحميل")) { 
+                alert("نص الأصحاح غير جاهز بعد."); 
+                return; 
+            }
+            
             currentUtterance = new SpeechSynthesisUtterance(bibleChapterText);
-            currentUtterance.lang = 'ar-EG'; window.speechSynthesis.speak(currentUtterance);
+            
+            // جلب كل الأصوات المتاحة في جهاز المستخدم الحالي
+            let voices = window.speechSynthesis.getVoices();
+            
+            // البحث عن صوت رجالي عربي رسمي واضح (مثل ماجد أو حمدان)
+            let arabicVoice = voices.find(voice => 
+                (voice.lang.includes('ar-AE') || voice.lang.includes('ar-EG') || voice.lang.includes('ar')) 
+                && (voice.name.toLowerCase().includes('male') || voice.name.includes('Maged') || voice.name.includes('Tarif') || voice.name.includes('Hamdan'))
+            );
+            
+            // في حالة عدم توفر الصوت الرجالي المحدد، نأخذ الصوت القياسي العربي الفصيح المتوفر للجهاز
+            if (!arabicVoice) {
+                arabicVoice = voices.find(voice => voice.lang.includes('ar'));
+            }
+            
+            if (arabicVoice) {
+                currentUtterance.voice = arabicVoice;
+            }
+            
+            // ضبط الإعدادات لأفضل وضوح في قراءة التشكيل
+            currentUtterance.lang = 'ar-EG'; 
+            currentUtterance.rate = 0.85;  // تبطيء طفيف لجعل الترتيل والقراءة متزنة ومسموعة بوضوح
+            currentUtterance.pitch = 0.9;  // تضخيم وقور للصوت يناسب قراءة الآيات
+            
+            window.speechSynthesis.speak(currentUtterance);
         }
-        function pauseSpeaking() { if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) window.speechSynthesis.pause(); }
-        function stopSpeaking() { window.speechSynthesis.cancel(); }
+        
+        // تأمين جلب قائمة الأصوات في الخلفية لمتصفحات الويب الحديثة
+        if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = window.speechSynthesis.getVoices;
+        }
 
         function handleNameChange() {
             let name = document.getElementById("servantSelect").value;
@@ -335,7 +370,6 @@
             } else { document.getElementById("passwordArea").style.display = "none"; }
         }
 
-        // دالة مخصصة لتحويل أسطر الـ CSV المصفوفة مصفوفة مرتبة ومحمية بالكامل
         function parseCSVLines(text) {
             let lines = []; let row = [""]; let inQuotes = false;
             for (let i = 0; i < text.length; i++) {
@@ -358,18 +392,16 @@
 
         async function fetchAllData() {
             try {
-                // 1. جلب الأسئلة مباشرة بصيغة CSV الصافية والمستقلة
+                // 1. سحب الأسئلة المستقلة بنظام الـ CSV المباشر
                 let qRes = await fetch(QUESTIONS_CSV_URL);
                 let qText = await qRes.text();
                 let parsedRows = parseCSVLines(qText);
 
                 quizQuestions = [];
                 parsedRows.forEach((cols, i) => {
-                    if (i === 0 || cols.length < 2) return; // تخطي العناوين والأسطر الفارغة
+                    if (i === 0 || cols.length < 2) return; 
                     
                     let questionClean = cols[0] ? cols[0].trim() : "";
-                    
-                    // حماية صارمة لمنع تسلل أي أكواد برمجية داخل الأسئلة
                     if (questionClean === "" || questionClean.includes("const ") || questionClean.includes("docs.google")) return;
 
                     quizQuestions.push({
@@ -382,7 +414,7 @@
                     });
                 });
 
-                // 2. جلب نص الأصحاح مباشرة بصيغة CSV الصافية والمستقلة
+                // 2. سحب نص الأصحاح المستقل بنظام الـ CSV المباشر
                 try {
                     let chRes = await fetch(CHAPTER_CSV_URL);
                     let chText = await chRes.text();
@@ -393,20 +425,20 @@
                     } else if (chRows.length === 1 && chRows[0][0]) {
                         bibleChapterText = chRows[0][0].trim();
                     } else {
-                        bibleChapterText = "ملف نص الأصحاح فارغ، تأكد من الكتابة داخل الشيت الثاني.";
+                        bibleChapterText = "ملف الأصحاح فارغ؛ يرجى ملء بيانات النص داخل الشيت الثاني.";
                     }
                 } catch(e) {
-                    bibleChapterText = "تنبيه: تعذر قراءة ملف الأصحاح بشكل مستقل.";
+                    bibleChapterText = "تنبيه: عجز النظام عن قراءة شيت الأصحاح بشكل مستقل.";
                 }
 
                 document.getElementById("chapterTextContainer").innerText = bibleChapterText;
 
                 if (quizQuestions.length > 0) { switchPage("loginPage"); }
-                else { document.getElementById("globalStatus").innerText = "⚠️ شيت الأسئلة فارغ أو لا يحتوي على بيانات صالحة حالياً."; }
+                else { document.getElementById("globalStatus").innerText = "⚠️ لم يتم العثور على أسئلة صالحة، يرجى مراجعة محتوى الشيت الأول."; }
 
             } catch (error) {
                 console.error(error);
-                document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ تعذر الاتصال بجوجل شيت. تأكد من عمل "نشر على الويب" بصيغة CSV لكلا الرابطين.</span>`;
+                document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ تعذر الاتصال بجوجل شيت. يرجى مراجعة إعدادات "النشر على الويب" لكلا الشيتين بصيغة CSV.</span>`;
             }
         }
 
@@ -476,7 +508,7 @@
         }
 
         function toggleReviewSection() { let s = document.getElementById("reviewSection"); s.style.display = (s.style.display === "none") ? "block" : "none"; }
-        function verifyAdminPassword() { if (document.getElementById("adminPasswordInput").value === ADMIN_PASSWORD) { switchPage("adminPage"); loadAdminData(); } else { alert("خطأ"); } }
+        function verifyAdminPassword() { if (document.getElementById("adminPasswordInput").value === ADMIN_PASSWORD) { switchPage("adminPage"); loadAdminData(); } else { alert("خطأ في الرقم السري"); } }
 
         function loadAdminData() {
             let scores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
