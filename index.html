@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مسابقات دراسة الكتاب المقدس | أبي سيفين</title>
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=9E66FmsY"></script>
     <style>
         :root {
             --coptic-maroon: #580F0F; 
@@ -116,7 +117,7 @@
                 <option value="ثناء زكريا">ثناء زكريا</option>
                 <option value="جاكلين سعيد">جاكلين سعيد</option>
                 <option value="جانيت ويصا">جانيت ويصا</option>
-                <option value="جورج فايz">جورج فايز</option>
+                <option value="جورج فايز">جورج فايز</option>
                 <option value="جمال حنا">جمال حنا</option>
                 <option value="جيرمين زاهر">جيرمين زاهر</option>
                 <option value="جيهان شحاتة">جيهان شحاتة</option>
@@ -152,7 +153,7 @@
                 <option value="كريستين نصر">كريستين نصر</option>
                 <option value="كريم شكرالله">كريم شكرالله</option>
                 <option value="كيرلس اسامه">كيرلس اسامه</option>
-                <option value="k_fady">كيرلس فادي</option>
+                <option value="كيرلس فادي">كيرلس فادي</option>
                 <option value="كيرلس يوسف">كيرلس يوسف</option>
                 <option value="ليلي وهيب">ليلي وهيب</option>
                 <option value="ماجدة نجيب">ماجدة نجيب</option>
@@ -271,10 +272,8 @@
     </div>
 
     <script>
-        // 🔗 الرابط الأول: رابط شيت الأسئلة والاجابات (بصيغة CSV الناتجة من النشر على الويب)
+        // روابط الـ CSV الناتجة عن "النشر على الويب"
         const QUESTIONS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv";
-
-        // 🔗 الرابط الثاني: رابط شيت الأصحاح اليومي (بصيغة CSV الناتجة من النشر على الويب)
         const CHAPTER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlHtC2XhIAwgkBPyOKvgS40OJ8JiYHt_019eGTHb9ltGaxc-oV6gT2QS924VOBSFZMv0N7d2OnzRBe/pub?output=csv";
 
         const SERVANT_PASSWORDS = {
@@ -300,7 +299,7 @@
 
         let quizQuestions = []; let bibleChapterText = "جاري تحميل نص الأصحاح...";
         let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 0;
-        let userAnswers = {}; let currentUtterance = null; 
+        let userAnswers = {};
 
         function switchPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -316,49 +315,34 @@
 
         function exitChapterPage() { stopSpeaking(); goToHome(); }
 
+        // دالة القراءة المعدلة كلياً باستخدام المحرك الاحترافي المستقل
         function speakChapter() {
-            if (window.speechSynthesis.paused) { 
-                window.speechSynthesis.resume(); 
-                return; 
-            }
-            window.speechSynthesis.cancel();
-            
             if (!bibleChapterText || bibleChapterText.includes("جاري تحميل")) { 
                 alert("نص الأصحاح غير جاهز بعد."); 
                 return; 
             }
             
-            currentUtterance = new SpeechSynthesisUtterance(bibleChapterText);
-            
-            // جلب كل الأصوات المتاحة في جهاز المستخدم الحالي
-            let voices = window.speechSynthesis.getVoices();
-            
-            // البحث عن صوت رجالي عربي رسمي واضح (مثل ماجد أو حمدان)
-            let arabicVoice = voices.find(voice => 
-                (voice.lang.includes('ar-AE') || voice.lang.includes('ar-EG') || voice.lang.includes('ar')) 
-                && (voice.name.toLowerCase().includes('male') || voice.name.includes('Maged') || voice.name.includes('Tarif') || voice.name.includes('Hamdan'))
-            );
-            
-            // في حالة عدم توفر الصوت الرجالي المحدد، نأخذ الصوت القياسي العربي الفصيح المتوفر للجهاز
-            if (!arabicVoice) {
-                arabicVoice = voices.find(voice => voice.lang.includes('ar'));
+            // إلغاء أي قراءة شغالة حالياً قبل البدء
+            if (window.responsiveVoice) {
+                window.responsiveVoice.cancel();
+                
+                // تشغيل الصوت الرجالي للفصحى مباشرة وبأعلى دقة تشكيل
+                // الإعدادات: السرعة (rate) = 0.82 لإعطاء وقار ووضوح تام لكل حركة تشكيلية
+                window.responsiveVoice.speak(bibleChapterText, "Arabic Male", {
+                    rate: 0.82, 
+                    pitch: 0.95
+                });
+            } else {
+                alert("جاري تحميل محرك الصوت، اضغط مرة أخرى بعد ثانيتين.");
             }
-            
-            if (arabicVoice) {
-                currentUtterance.voice = arabicVoice;
-            }
-            
-            // ضبط الإعدادات لأفضل وضوح في قراءة التشكيل
-            currentUtterance.lang = 'ar-EG'; 
-            currentUtterance.rate = 0.85;  // تبطيء طفيف لجعل الترتيل والقراءة متزنة ومسموعة بوضوح
-            currentUtterance.pitch = 0.9;  // تضخيم وقور للصوت يناسب قراءة الآيات
-            
-            window.speechSynthesis.speak(currentUtterance);
         }
         
-        // تأمين جلب قائمة الأصوات في الخلفية لمتصفحات الويب الحديثة
-        if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = window.speechSynthesis.getVoices;
+        function pauseSpeaking() { 
+            if (window.responsiveVoice) window.responsiveVoice.pause(); 
+        }
+        
+        function stopSpeaking() { 
+            if (window.responsiveVoice) window.responsiveVoice.cancel(); 
         }
 
         function handleNameChange() {
@@ -392,7 +376,6 @@
 
         async function fetchAllData() {
             try {
-                // 1. سحب الأسئلة المستقلة بنظام الـ CSV المباشر
                 let qRes = await fetch(QUESTIONS_CSV_URL);
                 let qText = await qRes.text();
                 let parsedRows = parseCSVLines(qText);
@@ -414,7 +397,6 @@
                     });
                 });
 
-                // 2. سحب نص الأصحاح المستقل بنظام الـ CSV المباشر
                 try {
                     let chRes = await fetch(CHAPTER_CSV_URL);
                     let chText = await chRes.text();
