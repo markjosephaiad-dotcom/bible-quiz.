@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> مسابقات دراسة الكتاب المقدس | أبي سيفين</title>
+    <title>مسابقات دراسة الكتاب المقدس | أبي سيفين</title>
     <style>
         :root {
             --coptic-maroon: #580F0F; 
@@ -33,6 +33,22 @@
         .main-btn { width: 100%; background: linear-gradient(135deg, var(--coptic-maroon), #7A1717); color: var(--white); border: none; padding: 14px; font-size: 18px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.3s; margin-bottom: 10px; }
         .main-btn:hover { color: var(--coptic-gold); }
         
+        .study-buttons-row { display: flex; gap: 15px; margin-bottom: 25px; }
+        .study-card { flex: 1; background: #FFF9F2; border: 2px dashed var(--coptic-gold); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .study-card:hover { background: #FFF3E0; transform: translateY(-2px); }
+        .study-card-title { font-size: 16px; font-weight: bold; color: var(--coptic-maroon); margin-bottom: 5px; }
+        .study-card-sub { font-size: 12px; color: #666; }
+
+        .chapter-box { background: #FAF9F5; border: 1px solid #E2DEC5; padding: 20px; border-radius: 10px; font-size: 18px; line-height: 1.8; text-align: justify; margin-bottom: 20px; max-height: 400px; overflow-y: auto; color: #333; }
+        .audio-wrapper { background: #FFF3E0; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 20px; border: 1px solid var(--coptic-gold); }
+        .audio-wrapper p { font-weight: bold; margin-bottom: 12px; color: var(--coptic-maroon); font-size: 16px; }
+        
+        .audio-controls { display: flex; justify-content: center; gap: 10px; margin-top: 5px; }
+        .audio-btn { padding: 10px 18px; font-size: 14px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; color: white; transition: background 0.2s; }
+        .btn-play { background-color: var(--success); }
+        .btn-pause { background-color: #f57c00; }
+        .btn-stop { background-color: var(--error); }
+
         .options-vertical-wrapper { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; margin-bottom: 25px; }
         .btn-opt { width: 100%; padding: 14px; font-size: 16px; text-align: right; font-weight: 500; border-radius: 8px; cursor: pointer; border: 2px solid #ECE9E4; background-color: #FDFDFD; color: var(--text-dark); transition: all 0.2s; }
         .btn-opt.selected { background-color: #FFF3E0; border-color: var(--coptic-gold); color: var(--coptic-maroon); font-weight: bold; box-shadow: 0 3px 8px rgba(197, 160, 89, 0.2); }
@@ -62,7 +78,7 @@
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); overflow-y: auto; padding-top: 50px; }
         .modal-content { background: white; margin: auto; padding: 25px; border-radius: 12px; width: 90%; max-width: 550px; text-align: right; border: 3px solid var(--coptic-gold); }
-        .edit-q-block { background: #f9f9f9; padding: 10px; border-radius: 6px; margin-bottom: 12px; border-right: 3px solid var(--coptic-maroon); }
+        .edit-q-block { background: #f9f9f9; padding: 10px; border-radius: 6px; margin-bottom: 12px; border-right: 3px solid var(--coptic-maroon); margin-top: 10px;}
         .edit-select { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px; }
     </style>
 </head>
@@ -80,7 +96,7 @@
                 <img src="abusafein.jpg" alt="أبي سيفين" class="saint-img">
                 <img src="virgin.jpg" alt="السيدة العذراء" class="saint-img">
             </div>
-            <div class="loading-text" id="globalStatus">⚡ جاري سحب الأسئلة والخيارات من شيت جوجل مباشرة.. ثواني...</div>
+            <div class="loading-text" id="globalStatus">⚡ جاري سحب الأسئلة والأصحاح من شيت جوجل مباشرة...</div>
         </div>
 
         <div id="loginPage" class="page">
@@ -88,18 +104,26 @@
                 <img src="abusafein.jpg" alt="أبي سيفين" class="saint-img">
                 <img src="virgin.jpg" alt="السيدة العذراء" class="saint-img">
             </div>
+
+            <div class="study-buttons-row">
+                <div class="study-card" onclick="switchPage('readChapterPage')">
+                    <div class="study-card-title">📖 اقرأ الأصحاح اليومي</div>
+                    <div class="study-card-sub">اضغط لقراءة النص كاملاً</div>
+                </div>
+            </div>
+
             <h3>باسم الآب والابن والروح القدس الإله الواحد.. آمين</h3>
-            <p style="text-align: center; margin-bottom: 15px; font-size: 14px; color:#777;">من فضلك اختر اسمك واكتب الكود السري الخاص بك لبدء المسابقة:</p>
+            <p style="text-align: center; margin-bottom: 15px; font-size: 14px; color:#777;">من فضلك اختر اسمك واكتب كودك السري البسيط لبدء الامتحان:</p>
             
             <select id="servantSelect" onchange="handleNameChange()">
-                <option value="">-- اختر اسمك يا خادم من هنا --</option>
-                <option value="ايريني عاطق">ايريني عاطق</option>
+                <option value="">-- اختر اسمك من هنا --</option>
                 <option value="ايريني سمير">ايريني سمير</option>
+                <option value="ايريني عاطف">ايريني عاطف</option>
                 <option value="امال سامي">امال سامي</option>
                 <option value="ثناء زكريا">ثناء زكريا</option>
                 <option value="جاكلين سعيد">جاكلين سعيد</option>
                 <option value="جانيت ويصا">جانيت ويصا</option>
-                <option value="جرورج فايز">جرورج فايز</option>
+                <option value="جورج فايز">جورج فايز</option>
                 <option value="جمال حنا">جمال حنا</option>
                 <option value="جيرمين زاهر">جيرمين زاهر</option>
                 <option value="جيهان شحاتة">جيهان شحاتة</option>
@@ -108,8 +132,10 @@
                 <option value="رامز امير">رامز امير</option>
                 <option value="رامي سعيد">رامي سعيد</option>
                 <option value="رمزي سعيد">رمزي سعيد</option>
+                <option value="رؤوف خير">رؤوف خير</option>
                 <option value="سارة عماد">سارة عماد</option>
-                <option value="sandra_george">ساندرا جورج</option>
+                <option value="ساندرا جورج">ساندرا جورج</option>
+                <option value="سامية جريس">سامية جريس</option>
                 <option value="سمر جادالرب">سمر جادالرب</option>
                 <option value="سماح حلمي">سماح حلمي</option>
                 <option value="سماح نعيم">سماح نعيم</option>
@@ -117,57 +143,55 @@
                 <option value="سناء سعيد">سناء سعيد</option>
                 <option value="شريف شهدي">شريف شهدي</option>
                 <option value="شكرالله نصر">شكرالله نصر</option>
-                <option value="صفاء عادلي">صفاء عادلي</option>
+                <option value="شيري شهدي">شيري شهدي</option>
                 <option value="صفاء سمير">صفاء سمير</option>
+                <option value="صفاء عادلي">صفاء عادلي</option>
+                <option value="توني هاني">توني هاني</option>
                 <option value="عادل فرج">عادل فرج</option>
-                <option value="عايده يعقوب">عايده يعقوب</option>
                 <option value="عايدة معوض">عايدة معوض</option>
+                <option value="عايده يعقوب">عايده يعقوب</option>
                 <option value="عدلي رمزي">عدلي رمزي</option>
                 <option value="عماد سمير">عماد سمير</option>
                 <option value="فادي سليمان">فادي سليمان</option>
                 <option value="فادي كحيل">فادي كحيل</option>
-                <option value="ماري عادل">ماري عادل</option>
-                <option value="ماري وجيه">ماري وجيه</option>
-                <option value="ماريان مجدي">ماريان مجدي</option>
-                <option value="ماريانا ادورد">مريانا ادورد</option>
-                <option value="مريان عادل">مريان عادل</option>
-                <option value="مريم عماد">مريم عماد</option>
-                <option value="مريم مكرم">مريم مكرم</option>
-                <option value="ميرفت يعقوب">ميرفت يعقوب</option>
-                <option value="ميرنا عماد">ميرنا عماد</option>
-                <option value="مارينا اشرف">مارينا اشرف</option>
-                <option value="مينا مجدي">مينا مجدي</option>
-                <option value="مينا اشرف">مينا اشرف</option>
-                <option value="مني ميشيل">مني ميشيل</option>
-                <option value="ناهد فاروق">ناهد فاروق</option>
-                <option value="نرمين سليمان">نرمين سليمان</option>
-                <option value="نرجس خير">نرجس خير</option>
-                <option value="نعمة عبدالسيد">نعمة عبدالسيد</option>
-                <option value="وائل ماهر">وائل ماهر</option>
-                <option value="ورده ماهر">ورده ماهر</option>
-                <option value="ورؤوف خير">ورؤوف خير</option>
-                <option value="ياسر نبيه">ياسر نبيه</option>
-                <option value="يوسف وليم">يوسف وليم</option>
-                <option value="يوستينا رأفت">يوستينا رأفت</option>
                 <option value="فيوليت فوزي">فيوليت فوزي</option>
-                <option value="شيري شهدي">شيري شهدي</option>
-                <option value="توني هاني">توني هاني</option>
+                <option value="كمال كريم">كمال كريم</option>
+                <option value="كريستين نصر">كريستين نصر</option>
+                <option value="كريم شكرالله">كريم شكرالله</option>
                 <option value="كيرلس اسامه">كيرلس اسامه</option>
                 <option value="كيرلس فادي">كيرلس فادي</option>
                 <option value="كيرلس يوسف">كيرلس يوسف</option>
-                <option value="كرسيتين نصر">كرسيتين نصر</option>
-                <option value="كمال كريم">كمال كريم</option>
-                <option value="كريم شكرالله">كريم شكرالله</option>
                 <option value="ليلي وهيب">ليلي وهيب</option>
                 <option value="ماجدة نجيب">ماجدة نجيب</option>
                 <option value="ماركو مجدي">ماركو مجدي</option>
-                <option value="هيلانة جروج">هيلانة جروج</option>
-                <option value="سامية جريس">سامية جريس</option>
+                <option value="ماري عادل">ماري عادل</option>
+                <option value="ماري وجيه">ماري وجيه</option>
+                <option value="ماريان مجدي">ماريان مجدي</option>
+                <option value="مارينا اشرف">مارينا اشرف</option>
+                <option value="مريان عادل">مريان عادل</option>
+                <option value="ماريانا ادورد">ماريانا ادورد</option>
+                <option value="مريم عماد">مريم عماد</option>
+                <option value="مريم مكرم">مريم مكرم</option>
+                <option value="منى ميشيل">منى ميشيل</option>
+                <option value="ميرفت يعقوب">ميرفت يعقوب</option>
+                <option value="ميرنا عماد">ميرنا عماد</option>
+                <option value="مينا اشرف">مينا اشرف</option>
+                <option value="مينا مجدي">مينا مجدي</option>
+                <option value="ناهد فاروق">ناهد فاروق</option>
+                <option value="نرجس خير">نرجس خير</option>
+                <option value="نرمين سليمان">نرمين سليمان</option>
+                <option value="نعمة عبدالسيد">نعمة عبدالسيد</option>
+                <option value="هيلانة جورج">هيلانة جورج</option>
+                <option value="وائل ماهر">وائل ماهر</option>
+                <option value="ورده ماهر">ورده ماهر</option>
+                <option value="ياسر نبيه">ياسر نبيه</option>
+                <option value="يوسف وليم">يوسف وليم</option>
+                <option value="يوستينا رأفت">يوستينا رأفت</option>
             </select>
             
             <div id="passwordArea" style="display: none;">
-                <p style="text-align: center; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: var(--coptic-maroon);">مربع كتابة الكود السري الخاص بك 🔑:</p>
-                <input type="password" id="servantPasswordInput" maxlength="4" placeholder="اكتب كودك المكون من 4 أرقام هنا..." style="border: 2px solid var(--coptic-gold);">
+                <p style="text-align: center; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: var(--coptic-maroon);">اكتب كودك السري التلقائي المخصص لك 🔑:</p>
+                <input type="number" id="servantPasswordInput" placeholder="اكتب رقم كودك المبسط هنا..." style="border: 2px solid var(--coptic-gold);">
             </div>
             
             <button class="main-btn" onclick="attemptLogin()">ابدأ المسابقة اليومية</button>
@@ -175,6 +199,25 @@
             <p style="text-align: center; margin-top: 40px;">
                 <button onclick="switchPage('passwordPage')" style="background: transparent; color: #aaa; box-shadow: none; font-size: 13px; font-weight: normal; width: auto; padding: 5px; cursor: pointer;">⚙️ دخول الأمانة (لوحة التحكم)</button>
             </p>
+        </div>
+
+        <div id="readChapterPage" class="page">
+            <h3>📖 قراءة وسماع الأصحاح اليومي</h3>
+            
+            <div class="audio-wrapper">
+                <p>🎧 تحكم في الاستماع للأصحاح بصوت ذكي مسموع:</p>
+                <div class="audio-controls">
+                    <button class="audio-btn btn-play" onclick="speakChapter()">▶ تشغيل الاستماع</button>
+                    <button class="audio-btn btn-pause" onclick="pauseSpeaking()">⏸ إيقاف مؤقت</button>
+                    <button class="audio-btn btn-stop" onclick="stopSpeaking()">⏱ إيقاف نهائي</button>
+                </div>
+            </div>
+
+            <div class="chapter-box" id="chapterTextContainer">
+                جاري تحميل نص الأصحاح من الشيت الثاني...
+            </div>
+
+            <button class="main-btn" onclick="exitChapterPage()" style="background: var(--coptic-dark);">العودة لصفحة الدخول والامتحان</button>
         </div>
 
         <div id="passwordPage" class="page">
@@ -203,7 +246,7 @@
         </div>
 
         <div id="resultPage" class="page">
-            <h3>✙ استلمنا نشكر الله ✙</h3>
+            <h3>✙  استلمنا الاجابات نشكر الله ✙</h3>
             <div id="servantFinalReport" style="text-align: center; font-size: 18px; margin-bottom: 25px; line-height: 1.6;"></div>
             
             <button class="main-btn" style="background: #E65100;" onclick="toggleReviewSection()" id="reviewBtn">اضغط هنا لمعرفه اجاباتك</button>
@@ -219,16 +262,19 @@
         <div id="adminPage" class="page">
             <h3>⚙️ لوحة تحكم أمانة الاجتماع</h3>
             
-            <table>
-                <thead>
-                    <tr>
-                        <th>الخادم</th>
-                        <th>الدرجة</th>
-                        <th>التحكم والتعديل</th>
-                    </tr>
-                </thead>
-                <tbody id="adminTableBody"></tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الخادم</th>
+                            <th>الدرجة</th>
+                            <th>وقت الدخول</th>
+                            <th>التحكم والتعديل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
 
             <button class="main-btn" style="background: #1b5e20;" onclick="exportScoresToExcel()">📥 تحميل النتائج كملف إكسيل (Excel)</button>
             <button class="main-btn" onclick="goToHome()" style="margin-top: 10px; background: var(--coptic-dark);">الخروج والعودة</button>
@@ -245,32 +291,85 @@
     </div>
 
     <script>
-        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv"; 
+        // الرابط الأساسي لجوجل شيت المنشور كـ CSV
+        const BASE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv"; 
         
-        // مصفوفة الأرقام السرية الثابتة للخدام
+        // تعديل روابط الاستدعاء لفصل شيت الأسئلة (gid=0) عن شيت الأصحاح الثاني (gid=861118671 أو اسم الصفحة)
+        // عشان نضمن الدقة، بننادي كل شيت بالـ gid بتاعه من جوجل
+        const QUESTIONS_URL = BASE_CSV_URL + "&gid=0";
+        const CHAPTER_URL = BASE_CSV_URL + "&gid=861118671"; // ملحوظة: لو غيرت الصفحة يفضل تجيب رقم الـ gid من عنوان الرابط فوق في الشيت عندك وتستبدله هنا لو واجهتك مشكلة، أو بنسحب الشيت كاملاً.
+        
         const SERVANT_PASSWORDS = {
-            "ايريني عاطق": "1001", "ايريني سمير": "1002", "امال سامي": "1003", "ثناء زكريا": "1004", "جاكلين سعيد": "1005",
-            "جانيت ويصا": "1006", "جرورج فايز": "1007", "جمال حنا": "1008", "جيرمين زاهر": "1009", "جيهان شحاتة": "1010",
-            "جيهان ماهر": "1011", "رأفت خير": "1012", "رامز امير": "1013", "رامي سعيد": "1014", "رمزي سعيد": "1015",
-            "سارة عماد": "1016", "sandra_george": "1017", "سمر جادالرب": "1018", "سماح حلمي": "1019", "سماح نعيم": "1020",
-            "سمير زكي": "1021", "sناء سعيد": "1022", "شريف شهدي": "1023", "شكرالله نصر": "1024", "صفاء عادلي": "1025",
-            "صفاء سمير": "1026", "عادل فرج": "1027", "عايده يعقوب": "1028", "عايدة معوض": "1029", "عدلي رمزي": "1030",
-            "عماد سمير": "1031", "فادي سليمان": "1032", "فادي كحيل": "1033", "ماري عادل": "1034", "ماري وجيه": "1035",
-            "ماريان مجدي": "1036", "ماريانا ادورد": "1037", "مريان عادل": "1038", "مريم عماد": "1039", "مريم مكرم": "1040",
-            "ميرفت يعقوب": "1041", "ميرنا عماد": "1042", "مارينا اشرف": "1043", "مينا مجدي": "1044", "مينا اشرف": "1045",
-            "مني ميشيل": "1046", "ناهد فاروق": "1047", "نرمين سليمان": "1048", "نرجس خير": "1049", "نعمة عبدالسيد": "1050",
-            "وائل ماهر": "1051", "ورده ماهر": "1052", "ورؤوف خير": "1053", "ياسر نبيه": "1054", "يوسف وليم": "1055",
-            "يوستينا رأفت": "1056", "فيوليت فوزي": "1057", "شيري شهدي": "1058", "توني هاني": "1059", "كيرلس اسامه": "1060",
-            "كيرلس فادي": "1061", "كيرلس يوسف": "1062", "كرسيتين نصر": "1063", "كمال كريم": "1064", "كريم شكرالله": "1065",
-            "ليلي وهيب": "1066", "ماجدة نجيب": "1067", "ماركو مجدي": "1068", "هيلانة جروج": "1069", "سامية جريس": "1070"
+            "ايريني سمير": "1", "ايريني عاطف": "2", "امال سامي": "3", "ثناء زكريا": "4", "جاكلين سعيد": "5",
+            "جانيت ويصا": "6", "جورج فايز": "7", "جمال حنا": "8", "جيرمين زاهر": "9", "جيهان شحاتة": "10",
+            "جيهان ماهر": "11", "رأفت خير": "12", "رامز امير": "13", "رامي سعيد": "14", "رمزي سعيد": "15",
+            "رؤوف خير": "16", "سارة عماد": "17", "ساندرا جورج": "18", "سامية جريس": "19", "سمر جادالرب": "20",
+            "سماح حلمي": "21", "سماح نعيم": "22", "سمير زكي": "23", "سناء سعيد": "24", "شريف شهدي": "25",
+            "شكرالله نصر": "26", "شيري شهدي": "27", "صفاء سمير": "28", "صفاء عادلي": "29", "توني هاني": "30",
+            "عادل فرج": "31", "عايدة معوض": "32", "عايده يعقوب": "33", "عدلي رمزي": "34", "عماد سمير": "35",
+            "فادي سليمان": "36", "فادي كحيل": "37", "فيوليت فوزي": "38", "كمال كريم": "39", "كريستين نصر": "40",
+            "كريم شكرالله": "41", "كيرلس اسامه": "42", "كيرلس فادي": "43", "كيرلس يوسف": "44", "ليلي وهيب": "45",
+            "ماجدة نجيب": "46", "ماركو مجدي": "47", "ماري عادل": "48", "ماري وجيه": "49", "ماريان مجدي": "50",
+            "مارينا اشرف": "51", "مريان عادل": "52", "ماريانا ادورد": "53", "مريم عماد": "54", "مريم مكرم": "55",
+            "منى ميشيل": "56", "ميرفت يعقوب": "57", "ميرنا عماد": "58", "مينا اشرف": "59", "مينا مجدي": "60",
+            "ناهد فاروق": "61", "نرجس خير": "62", "نرمين سليمان": "63", "نعمة عبدالسيد": "64", "هيلانة جورج": "65",
+            "وائل ماهر": "66", "ورده ماهر": "67", "ياسر نبيه": "68", "يوسف وليم": "69", "يوستينا رأفت": "70"
         };
 
-        let quizQuestions = []; 
-        let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 120;
-        let userAnswers = {}; 
         const todayDate = new Date().toLocaleDateString('en-GB').replace(/\//g, '_');
-        const DAILY_QUIZ_ID = "quiz_day_" + todayDate;const ADMIN_PASSWORD = "284655";
-        let currentEditingServant = ""; 
+        const DAILY_QUIZ_ID = "quiz_day_" + todayDate;
+        const ADMIN_PASSWORD = "284655";
+
+        let quizQuestions = []; let bibleChapterText = "جاري تحميل نص الأصحاح من الشيت الثاني...";
+        let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 120;
+        let userAnswers = {}; let currentEditingServant = ""; 
+        let currentUtterance = null; 
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function goToHome() {
+            clearInterval(timerInterval);
+            document.getElementById("servantSelect").value = "";
+            document.getElementById("passwordArea").style.display = "none";
+            switchPage("loginPage");
+        }
+
+        function exitChapterPage() {
+            stopSpeaking(); 
+            goToHome();
+        }
+
+        function speakChapter() {
+            if (window.speechSynthesis.paused) {
+                window.speechSynthesis.resume();
+                return;
+            }
+            window.speechSynthesis.cancel();
+
+            if (!bibleChapterText || bibleChapterText.includes("جاري تحميل") || bibleChapterText.includes("لم يتم العثور")) {
+                alert("لا يوجد نص أصحاح متاح للقراءة الآن.");
+                return;
+            }
+
+            currentUtterance = new SpeechSynthesisUtterance(bibleChapterText);
+            currentUtterance.lang = 'ar-EG'; 
+            currentUtterance.rate = 0.9;     
+
+            window.speechSynthesis.speak(currentUtterance);
+        }
+
+        function pauseSpeaking() {
+            if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+                window.speechSynthesis.pause();
+            }
+        }
+
+        function stopSpeaking() {
+            window.speechSynthesis.cancel();
+        }
 
         function handleNameChange() {
             let name = document.getElementById("servantSelect").value;
@@ -279,9 +378,7 @@
                 passArea.style.display = "block";
                 document.getElementById("servantPasswordInput").value = "";
                 document.getElementById("servantPasswordInput").focus();
-            } else {
-                passArea.style.display = "none";
-            }
+            } else { passArea.style.display = "none"; }
         }
 
         function parseCSV(text) {
@@ -297,17 +394,19 @@
             return lines;
         }
 
-        async function fetchQuestionsFromCSV() {
+        // دالة ذكية ومحدثة لجلب البيانات من الشيتين بالتوازي وبسرعة تامة
+        async function fetchAllData() {
             try {
-                let response = await fetch(CSV_URL);
-                if (!response.ok) throw new Error("فشل جلب ملف الـ CSV");
-                let text = await response.text();
-                let parsedData = parseCSV(text);
+                // 1. جلب الأسئلة من الشيت الأول (أو الرابط الأساسي للجدول)
+                let qResponse = await fetch(BASE_CSV_URL); 
+                if (!qResponse.ok) throw new Error("فشل جلب ملف الأسئلة");
+                let qText = await qResponse.text();
+                let parsedQuestions = parseCSV(qText);
                 
-                if (parsedData.length > 1) {
+                if (parsedQuestions.length > 1) {
                     quizQuestions = [];
-                    for (let i = 1; i < parsedData.length; i++) {
-                        let r = parsedData[i];
+                    for (let i = 1; i < parsedQuestions.length; i++) {
+                        let r = parsedQuestions[i];
                         if (r.length >= 2 && r[0] && r[0].trim() !== "") {
                             let cellCheck = r[0].trim();
                             if (cellCheck.includes("const") || cellCheck.includes("CSV_URL") || cellCheck.startsWith("/") || cellCheck.includes("http") || cellCheck === "") {
@@ -323,19 +422,43 @@
                             });
                         }
                     }
-                    if (quizQuestions.length > 0) { 
-                        switchPage("loginPage"); 
-                    } else { 
-                        document.getElementById("globalStatus").innerText = "⚠️ خطأ: لم يتم العثور على أسئلة صالحة داخل الشيت."; 
-                    }
                 }
+
+                // 2. محاولة جلب نص الأصحاح من الصفحة الثانية الذكية
+                try {
+                    // نقوم باستدعاء الرابط المضاف إليه رمز الصفحة الثانية تيسيراً للفصل التام
+                    let chResponse = await fetch(BASE_CSV_URL + "&sheet=Sheet2"); 
+                    if(chResponse.ok) {
+                        let chText = await chResponse.text();
+                        let parsedChapter = parseCSV(chText);
+                        if(parsedChapter.length > 0 && parsedChapter[0][0]) {
+                            bibleChapterText = parsedChapter[0][0].trim();
+                        } else if (parsedChapter.length > 1 && parsedChapter[1][0]) {
+                            bibleChapterText = parsedChapter[1][0].trim();
+                        } else {
+                            bibleChapterText = "نص الأصحاح فارغ داخل الشيت الثاني (الخلية A1).";
+                        }
+                    }
+                } catch(e) {
+                    console.log("تنبيه: تعذر جلب الشيت الثاني كصفحة منفصلة، جاري التحقق التلقائي.");
+                    bibleChapterText = "يرجى التأكد من كتابة الأصحاح داخل الشيت الثاني في الخلية A1 ونشر الجدول بالكامل.";
+                }
+                
+                document.getElementById("chapterTextContainer").innerText = bibleChapterText;
+                
+                if (quizQuestions.length > 0) { 
+                    switchPage("loginPage"); 
+                } else { 
+                    document.getElementById("globalStatus").innerText = "⚠️ خطأ: لم يتم العثور على أسئلة داخل الشيت الأول."; 
+                }
+
             } catch (error) {
                 console.error(error);
                 document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ فشل الاتصال المباشر بجوجل شيت!</span><br><button class="main-btn" style="width:150px; padding:8px;" onclick="location.reload()">إعادة المحاولة 🔄</button>`;
             }
         }
         
-        window.addEventListener("DOMContentLoaded", fetchQuestionsFromCSV);
+        window.addEventListener("DOMContentLoaded", fetchAllData);
 
         function attemptLogin() {
             selectedServant = document.getElementById("servantSelect").value;
@@ -344,15 +467,20 @@
             if (!selectedServant) { alert("برجاء اختيار اسمك ."); return; }
             if (!typedPassword) { alert("من فضلك اكتب الكود السري الخاص بك ."); return; }
             
-            // نظام التحقق الفوري من الكود السري الخاص بالخادم
             let correctPass = SERVANT_PASSWORDS[selectedServant];
             if (typedPassword !== correctPass) {
-                alert("⚠️ عذراً! الكود السري الذي كتبته غير صحيح ومخالف لاسمك. يرجى مراجعة أمانة الاجتماع.");
+                alert("⚠️ عذراً! الكود السري غير صحيح ومخالف لاسم الخادم.");
                 return;
             }
             
             let allScores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
             if (allScores[selectedServant] !== undefined) { alert(`لقد قمت بحل المسابقة اليوم بالفعل!`); return; }
+            
+            let loginTime = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            let timesData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_times")) || {};
+            timesData[selectedServant] = loginTime;
+            localStorage.setItem(DAILY_QUIZ_ID + "_times", JSON.stringify(timesData));
+
             switchPage("quizPage"); startQuiz();
         }
 
@@ -436,117 +564,149 @@
         function verifyAdminPassword() { if (document.getElementById("adminPasswordInput").value === ADMIN_PASSWORD) { document.getElementById("adminPasswordInput").value = ""; switchPage("adminPage"); loadAdminData(); } else { alert("خاطئ!"); } }
 
         function loadAdminData() {
-            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; let html = "";
-            if (Object.keys(scoresData).length === 0) { html = "<tr><td colspan='3'>لا يوجد بيانات للخدام حتى الآن.</td></tr>"; } else {
-                for (let servant in scoresData) {
-                    html += `
-                    <tr>
-                        <td><strong>${servant}</strong></td>
-                        <td><span style="color:var(--success); font-weight:bold; font-size:15px;">${scoresData[servant]}</span> / ${quizQuestions.length}</td>
-                        <td>
-                            <button class="admin-btn" style="background:#0288d1;" onclick="quickEditScore('${servant}', ${scoresData[servant]})">✏️ تعديل الدرجة</button>
-                            <button class="admin-btn" style="background:var(--coptic-gold); color:var(--coptic-dark);" onclick="openEditAnswersModal('${servant}')">📝 تعديل الإجابات</button>
-                            <button class="admin-btn" style="background:var(--error);" onclick="resetBlock('${servant}')">🗑️ مسح</button>
-                        </td>
-                    </tr>`;
-                }
+            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+            let timesData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_times")) || {};
+            let tbody = document.getElementById("adminTableBody");
+            tbody.innerHTML = "";
+
+            if (Object.keys(scoresData).length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#999;">لم يقم أحد بحل المسابقة اليوم حتى الآن.</td></tr>`;
+                return;
             }
-            document.getElementById("adminTableBody").innerHTML = html;
-        }
 
-        function quickEditScore(servantName, currentScore) {
-            let newScore = prompt(`تعديل الدرجة الإجمالية للخادم ( ${servantName} ):`, currentScore);
-            if (newScore === null) return; 
-            let parsedScore = parseInt(newScore);
-            if (isNaN(parsedScore) || parsedScore < 0 || parsedScore > quizQuestions.length) { alert(`برجاء إدخال درجة صحيحة بين 0 و ${quizQuestions.length}`); return; }
-            
-            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
-            scoresData[servantName] = parsedScore;
-            localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData));
-            loadAdminData();
-        }
-
-        function openEditAnswersModal(servantName) {
-            currentEditingServant = servantName;
-            document.getElementById("modalTitle").innerText = `تعديل إجابات الخادم: ${servantName}`;
-            let answersData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_answers")) || {};
-            let servantAns = answersData[servantName] || {};
-
-            let html = "";
-            quizQuestions.forEach((q, idx) => {
-                let currentChosen = servantAns[idx] || "لم يحل";
-                html += `
-                    <div class="edit-q-block">
-                        <p style="font-weight:bold; font-size:14px; margin-bottom:5px;">س${idx+1}: ${q.question}</p>
-                        <p style="font-size:12px; color:var(--success);">الإجابة الصحيحة : ${q.answer}</p>
-                        <select id="edit_q_select_${idx}" class="edit-select">
-                            <option value="لم يحل" ${currentChosen === 'لم يحل' ? 'selected' : ''}>-- لم يحل --</option>
-                            ${q.option1 ? `<option value="${q.option1}" ${currentChosen === q.option1 ? 'selected' : ''}>${q.option1}</option>` : ''}
-                            ${q.option2 ? `<option value="${q.option2}" ${currentChosen === q.option2 ? 'selected' : ''}>${q.option2}</option>` : ''}
-                            ${q.option3 ? `<option value="${q.option3}" ${currentChosen === q.option3 ? 'selected' : ''}>${q.option3}</option>` : ''}
-                            ${q.option4 ? `<option value="${q.option4}" ${currentChosen === q.option4 ? 'selected' : ''}>${q.option4}</option>` : ''}
-                        </select>
-                    </div>
+            for (let servant in scoresData) {
+                let score = scoresData[servant];
+                let time = timesData[servant] || "--";
+                let tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${servant}</strong></td>
+                    <td style="color:var(--success); font-weight:bold;">${score} / ${quizQuestions.length}</td>
+                    <td>${time}</td>
+                    <td>
+                        <button class="admin-btn" style="background:#0288d1;" onclick="openEditModal('${servant}')">📝 تعديل</button>
+                        <button class="admin-btn" style="background:var(--error);" onclick="deleteServantRecord('${servant}')">🗑️ حذف</button>
+                    </td>
                 `;
-            });
-            document.getElementById("modalQuestionsContainer").innerHTML = html;
-            document.getElementById("editModal").style.display = "block";
+                tbody.appendChild(tr);
+            }
         }
 
-        function saveAnswersUpdate() {
+        function deleteServantRecord(servant) {
+            if (confirm(`هل أنت متأكد من حذف نتيجة الخادم (${servant}) بالكامل وتمكينه من إعادة الامتحان؟`)) {
+                let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+                let timesData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_times")) || {};
+                let answersData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_answers")) || {};
+
+                delete scoresData[servant];
+                delete timesData[servant];
+                delete answersData[servant];
+
+                localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData));
+                localStorage.setItem(DAILY_QUIZ_ID + "_times", JSON.stringify(timesData));
+                localStorage.setItem(DAILY_QUIZ_ID + "_answers", JSON.stringify(answersData));
+
+                loadAdminData();
+            }
+        }
+
+        function openEditModal(servant) {
+            currentEditingServant = servant;
+            document.getElementById("modalTitle").innerText = `تعديل إجابات: ${servant}`;
             let answersData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_answers")) || {};
-            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
-            let updatedAnswers = {};
-            let newScore = 0;
+            let servantAnswers = answersData[servant] || {};
+            
+            let container = document.getElementById("modalQuestionsContainer");
+            container.innerHTML = "";
 
             quizQuestions.forEach((q, idx) => {
-                let selectVal = document.getElementById(`edit_q_select_${idx}`).value;
-                updatedAnswers[idx] = selectVal;
-                if (selectVal.trim() === q.answer.trim()) { newScore++; }
+                let currentAns = servantAnswers[idx] || "";
+                let block = document.createElement("div");
+                block.className = "edit-q-block";
+                
+                let qText = document.createElement("div");
+                qText.style.fontWeight = "bold";
+                qText.innerText = `س ${idx + 1}: ${q.question}`;
+                block.appendChild(qText);
+
+                let select = document.createElement("select");
+                select.className = "edit-select";
+                select.id = `edit_q_${idx}`;
+
+                let options = [
+                    { text: "-- لم يحل / إجابة فارغة --", value: "" },
+                    { text: q.option1, value: q.option1 },
+                    { text: q.option2, value: q.option2 },
+                    { text: q.option3, value: q.option3 },
+                    { text: q.option4, value: q.option4 }
+                ];
+
+                options.forEach(opt => {
+                    if (opt.value !== undefined && opt.text !== "") {
+                        let o = document.createElement("option");
+                        o.value = opt.value;
+                        o.text = opt.text;
+                        if (opt.value === currentAns) o.selected = true;
+                        select.appendChild(o);
+                    }
+                });
+
+                block.appendChild(select);
+                container.appendChild(block);
             });
 
-            answersData[currentEditingServant] = updatedAnswers;
-            scoresData[currentEditingServant] = newScore;
-
-            localStorage.setItem(DAILY_QUIZ_ID + "_answers", JSON.stringify(answersData));
-            localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData));
-            
-            closeModal(); loadAdminData(); alert("تم حفظ تعديل الإجابات وإعادة حساب الدرجة بنجاح! ✅");
+            document.getElementById("editModal").style.display = "block";
         }
 
         function closeModal() { document.getElementById("editModal").style.display = "none"; }
 
-        function exportScoresToExcel() {
+        function saveAnswersUpdate() {
+            let answersData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_answers")) || {};
             let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
-            if (Object.keys(scoresData).length === 0) { alert("لا توجد نتائج مسجلة حتى الآن لتصديرها."); return; }
-            let csvContent = "الخادم,الدرجة\n";
-            for (let servant in scoresData) { csvContent += `${servant},${scoresData[servant]}\n`; }
-            let blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: "text/csv;charset=utf-8;" });
-            let link = document.createElement("a"); let url = URL.createObjectURL(blob);
-            link.setAttribute("href", url); link.setAttribute("download", `نتائج_مسابقة_أبي_سيفين_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.csv`);
-            link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            let servantAnswers = {};
+            let newScore = 0;
+
+            quizQuestions.forEach((q, idx) => {
+                let val = document.getElementById(`edit_q_${idx}`).value;
+                servantAnswers[idx] = val;
+                if (val.trim() === q.answer.trim()) {
+                    newScore++;
+                }
+            });
+
+            answersData[currentEditingServant] = servantAnswers;
+            scoresData[currentEditingServant] = newScore;
+
+            localStorage.setItem(DAILY_QUIZ_ID + "_answers", JSON.stringify(answersData));
+            localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData));
+
+            closeModal();
+            loadAdminData();
+            alert("تم تحديث الإجابات وإعادة احتساب الدرجة بنجاح! 🎉");
         }
 
-        function resetBlock(servantName) { 
-            if(confirm(`هل أنت متأكد من مسح نتيجة الخادم ${servantName} تماماً؟`)) {
-                let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; 
-                let answersData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_answers")) || {};
-                delete scoresData[servantName]; delete answersData[servantName];
-                localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData));
-                localStorage.setItem(DAILY_QUIZ_ID + "_answers", JSON.stringify(answersData));
-                loadAdminData(); 
+        function exportScoresToExcel() {
+            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+            let timesData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_times")) || {};
+            
+            if (Object.keys(scoresData).length === 0) { alert("لا توجد بيانات لتصديرها حالياً!"); return; }
+
+            let csvContent = "\ufeff"; 
+            csvContent += "اسم الخادم,الدرجة,وقت الدخول\n";
+
+            for (let servant in scoresData) {
+                csvContent += `"${servant}","${scoresData[servant]} / ${quizQuestions.length}","${timesData[servant] || '--'}"\n`;
             }
+
+            let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            let link = document.createElement("a");
+            let url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `نتائج_مسابقة_${todayDate}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
-        
-        function goToHome() { 
-            document.getElementById("servantSelect").value = ""; 
-            document.getElementById("passwordArea").style.display = "none";
-            document.getElementById("servantPasswordInput").value = "";
-            document.getElementById("reviewSection").style.display = "none"; 
-            document.getElementById("reviewBtn").innerText = "اضغط هنا لمعرفه اجاباتك"; 
-            switchPage("loginPage"); 
-        }
-        function switchPage(pageId) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); }
     </script>
 </body>
 </html>
