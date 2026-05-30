@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة مسابقات دراسة الكتاب المقدس | أبي سيفين</title>
+    <style>
+        :root {
+            --coptic-maroon: #580F0F; 
+            --coptic-gold: #C5A059;   
+            --coptic-dark: #220505;
+            --bg-cream: #FAF8F5;       
+            --white: #FFFFFF;
+            --success: #1b5e20;
+            --error: #b71c1c;
+            --text-dark: #3E2723;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg-cream); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; background-image: radial-gradient(rgba(197, 160, 89, 0.05) 1px, transparent 0); background-size: 24px 24px; }
+        header { background: linear-gradient(135deg, var(--coptic-dark), var(--coptic-maroon)); color: var(--white); text-align: center; padding: 25px 15px; border-bottom: 6px double var(--coptic-gold); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        header h1 { font-size: 22px; font-weight: 700; margin-bottom: 5px; }
+        header h2 { font-size: 15px; color: var(--coptic-gold); font-weight: 400; }
+        .cross-icon { font-size: 20px; color: var(--coptic-gold); margin: 5px 0; }
+        .container { max-width: 650px; width: 92%; margin: 25px auto; background: var(--white); padding: 30px; border-radius: 16px; border: 1px solid rgba(197, 160, 89, 0.2); box-shadow: 0 10px 35px rgba(88, 15, 15, 0.05); }
+        .page { display: none; }
+        .active { display: block; }
+        .images-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .saint-img { width: 130px; height: 170px; object-fit: cover; border-radius: 12px; border: 3px solid var(--coptic-gold); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+        h3 { color: var(--coptic-maroon); text-align: center; font-size: 19px; margin-bottom: 20px; }
+        select, input[type="password"] { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #E0DCD5; border-radius: 10px; font-size: 16px; background-color: #FCFBF9; color: var(--text-dark); text-align: center; outline: none; }
+        button { width: 100%; background: linear-gradient(135deg, var(--coptic-maroon), #7A1717); color: var(--white); border: none; padding: 14px; font-size: 18px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
+        button:hover { color: var(--coptic-gold); }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 600; }
+        .timer-box { background: #FFF3E0; color: #E65100; padding: 6px 14px; border-radius: 20px; }
+        .progress-container { width: 100%; height: 6px; background: #EFEBE9; border-radius: 4px; margin-bottom: 25px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: var(--coptic-gold); transition: width 0.4s ease; }
+        .question-text { font-size: 18px; font-weight: 600; margin-bottom: 20px; text-align: center; }
+        .option-card { background: #FDFDFD; border: 2px solid #ECE9E4; padding: 14px; margin-bottom: 12px; border-radius: 10px; cursor: pointer; text-align: center; font-size: 18px; }
+        .option-card:hover { border-color: var(--coptic-gold); background: #FAF6EE; }
+        .option-card.correct { background-color: #E8F5E9 !important; border-color: var(--success) !important; color: var(--success); font-weight: bold; }
+        .option-card.wrong { background-color: #FFEBEE !important; border-color: var(--error) !important; color: var(--error); }
+        .disabled { pointer-events: none; }
+        .review-title { margin-top: 25px; border-top: 2px dashed #E0DCD5; padding-top: 20px; color: var(--coptic-maroon); }
+        .review-item { background: #FAF9F6; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-right: 4px solid var(--coptic-gold); text-align: right; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { padding: 10px; text-align: center; border-bottom: 1px solid #ddd; }
+        th { background-color: var(--coptic-maroon); color: white; }
+        .admin-btn { padding: 6px 10px; font-size: 12px; background: #555; width: auto; display: inline-block; margin: 2px; border: none; color: white; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>كنيسة الشهيد العظيم فيلوباتير مرقوريوس أبي سيفين - بمدينة عامر</h1>
+        <h2>اجتماع الخدام | منصة مسابقات دراسة الكتاب المقدس اليومية</h2>
+        <div class="cross-icon">✙ ✙ ✙</div>
+    </header>
+
+    <div class="container">
+        <div id="loginPage" class="page active">
+            <div class="images-row">
+                <img src="abusafein.jpg" alt="أبي سيفين" class="saint-img">
+                <img src="virgin.jpg" alt="السيدة العذراء" class="saint-img">
+            </div>
+            <h3>باسم الآب والابن والروح القدس الإله الواحد.. آمين</h3>
+            <p style="text-align: center; margin-bottom: 15px; font-size: 14px; color:#777;">من فضلك اختر اسمك من القائمة أدناه لبدء المسابقة اليومية (صح أو خطأ):</p>
+            
+            <select id="servantSelect">
+                <option value="">-- اختر اسمك يا خادم من هنا --</option>
+                <option value="عادل فرج">عادل فرج</option>
+                <option value="عماد سمير">عماد سمير</option>
+                <option value="ماريانا ادورد">ماريانا ادورد</option>
+                <option value="سمرجادالرب">سمرجادالرب</option>
+                <option value="جيهان شحاتة">جيهان شحاتة</option>
+                <option value="مارينا اشرف">مارينا اشرف</option>
+                <option value="مينا اشرف">مينا اشرف</option>
+                <option value="كيرلس اسامة">كيرلس اسامة</option>
+                <option value="سماح نعيم">سماح نعيم</option>
+                <option value="ماركو مجدي">ماركو مجدي</option>
+                <option value="مينا مجدي">مينا مجدي</option>
+                <option value="ميرنا عماد">ميرنا عماد</option>
+                <option value="شيري شهدي">شيري شهدي</option>
+                <option value="امير رامز">امير رامز</option>
+                <option value="فادي كحيل">فادي كحيل</option>
+                <option value="كيرلس فادي">كيرلس فادي</option>
+                <option value="مريان عادل">مريان عادل</option>
+            </select>
+            
+            <button onclick="attemptLogin()">ابدأ المسابقة اليومية</button>
+            
+            <p style="text-align: center; margin-top: 40px;">
+                <button onclick="switchPage('passwordPage')" style="background: transparent; color: #aaa; box-shadow: none; font-size: 13px; font-weight: normal; width: auto; padding: 5px; cursor: pointer;">⚙️ دخول الأمانة (لوحة التحكم)</button>
+            </p>
+        </div>
+
+        <div id="passwordPage" class="page">
+            <h3>تسجيل دخول أمانة الاجتماع</h3>
+            <input type="password" id="adminPasswordInput" placeholder="اكتب الرقم السري هنا...">
+            <button onclick="verifyAdminPassword()" style="margin-bottom: 10px;">تأكيد الدخول</button>
+            <button onclick="goToHome()" style="background: #666;">إلغاء والعودة</button>
+        </div>
+
+        <div id="quizPage" class="page">
+            <div class="quiz-header">
+                <span id="questionCounter">السؤال 1</span>
+                <span class="timer-box">الوقت المتبقي: <span id="timeLeft">02:00</span></span>
+            </div>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+            <div id="quizContent">
+                <div id="questionText" class="question-text">جاري التحميل...</div>
+                <div id="optionsContainer"></div>
+            </div>
+        </div>
+
+        <div id="resultPage" class="page">
+            <h3>✙ نشكر الله ✙</h3>
+            <div id="servantFinalReport" style="text-align: center; font-size: 18px; margin-bottom: 25px; line-height: 1.6;"></div>
+            <button onclick="toggleReview()" id="reviewBtn">اضغط هنا لمعرفة إجاباتك الشخصية ومراجعتها</button>
+            <div id="reviewSection" style="display: none;">
+                <h3 class="review-title">مراجعة إجاباتك الشخصية:</h3>
+                <div id="reviewContainer"></div>
+            </div>
+            <button onclick="goToHome()" style="margin-top: 20px; background: #666;">العودة للرئيسية للخدمة</button>
+        </div>
+
+        <div id="adminPage" class="page">
+            <h3>⚙️ لوحة تحكم أمانة الاجتماع</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الخادم</th>
+                        <th>الدرجة</th>
+                        <th>التحكم والتعديل</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody"></tbody>
+            </table>
+            <button onclick="goToHome()" style="margin-top: 25px; background: var(--coptic-dark);">الخروج والعودة لصفحة الدخول</button>
+        </div>
+    </div>
+
+    <script>
+        // الأسئلة هنا مدمجة مباشرة ونوعها (صح وخطأ) باختيارين فقط
+        const quizQuestions = [
+            { question: "السؤال 1: بني سليمان الحكيم الهيكل الأول في أورشليم.", options: ["صح", "خطأ"], answer: "صح" },
+            { question: "السؤال 2: عدد المجامع المسكونية المعترف بها في كنيستنا هو 4 مجامع.", options: ["صح", "خطأ"], answer: "خطأ" },
+            { question: "السؤال 3: النبي إرميا هو الذي لُقب بالرائي وكتب سفر المراثي.", options: ["صح", "خطأ"], answer: "صح" },
+            { question: "السؤال 4: قصة صعود إيليا النبي في العاصفة نجدها في سفر ملوك الأول.", options: ["صح", "خطأ"], answer: "خطأ" },
+            { question: "السؤال 5: سفر القضاة هو السفر الذي يأتي مباشرة بعد سفر يشوع.", options: ["صح", "خطأ"], answer: "صح" },
+            { question: "السؤال 6: مارمرقس الرسول هو الذي كرز في أرض مصر وأسس الكنيسة القبطية.", options: ["صح", "خطأ"], answer: "صح" },
+            { question: "السؤال 7: مكث يونان النبي في بطن الحوت يومين وليلتين فقط.", options: ["صح", "خطأ"], answer: "خطأ" },
+            { question: "السؤال 8: سفر ملاخي هو آخر أسفار العهد القديم في الترتيب.", options: ["صح", "خطأ"], answer: "صح" },
+            { question: "السؤال 9: يعتبر سفر الجامعة من الأسفار الشعرية في الكتاب المقدس.", options: ["صح", "خطأ"], answer: "صح" },
+            { question: "السؤال 10: الملك داود هو الذي بنى الهيكل الأول في أورشليم.", options: ["صح", "خطأ"], answer: "خطأ" }
+        ];
+
+        let selectedServant = ""; let currentQuestionIndex = 0; let score = 0; let timerInterval; let timeLeft = 120; let userAnswersLog = [];
+        const DAILY_QUIZ_ID = "quiz_day_30_05_2026"; const ADMIN_PASSWORD = "1234";
+
+        function attemptLogin() {
+            selectedServant = document.getElementById("servantSelect").value;
+            if (!selectedServant) { alert("برجاء اختيار اسمك أولاً يا خادم."); return; }
+            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+            if (scoresData[selectedServant] !== undefined) { alert(`عذراً يا خادم، لقد قمت بالاشتراك وحل مسابقة اليوم بالفعل! النتيجة مسجلة.`); return; }
+            switchPage("quizPage"); startQuiz();
+        }
+
+        function startQuiz() { currentQuestionIndex = 0; score = 0; userAnswersLog = []; showQuestion(); }
+
+        function showQuestion() {
+            clearInterval(timerInterval); timeLeft = 120; updateTimerDisplay();
+            if (currentQuestionIndex < quizQuestions.length) {
+                document.getElementById("questionCounter").innerText = `السؤال ${currentQuestionIndex + 1} من ${quizQuestions.length}`;
+                document.getElementById("progressBar").style.width = `${(currentQuestionIndex / quizQuestions.length) * 100}%`;
+                let currentQ = quizQuestions[currentQuestionIndex];
+                document.getElementById("questionText").innerText = currentQ.question;
+                let optionsHtml = "";
+                currentQ.options.forEach(opt => { optionsHtml += `<div class="option-card" onclick="selectOption(this, '${opt}')">${opt}</div>`; });
+                document.getElementById("optionsContainer").innerHTML = optionsHtml;
+                timerInterval = setInterval(() => { timeLeft--; updateTimerDisplay(); if (timeLeft <= 0) { clearInterval(timerInterval); handleTimeout(); } }, 1000);
+            } else { finishQuiz(); }
+        }
+
+        function updateTimerDisplay() { let mins = Math.floor(timeLeft / 60); let secs = timeLeft % 60; document.getElementById("timeLeft").innerText = `${mins < 10 ? "0"+mins : mins}:${secs < 10 ? "0"+secs : secs}`; }
+        function handleTimeout() { userAnswersLog.push({ question: quizQuestions[currentQuestionIndex].question, userAns: "انتهى الوقت", correctAns: quizQuestions[currentQuestionIndex].answer, isCorrect: false }); currentQuestionIndex++; showQuestion(); }
+
+        function selectOption(element, selectedOpt) {
+            clearInterval(timerInterval); document.querySelectorAll('.option-card').forEach(card => card.classList.add('disabled'));
+            let currentQ = quizQuestions[currentQuestionIndex]; let isCorrect = (selectedOpt === currentQ.answer);
+            if (isCorrect) { element.classList.add('correct'); score++; } else { element.classList.add('wrong'); document.querySelectorAll('.option-card').forEach(card => { if (card.innerText === currentQ.answer) card.classList.add('correct'); }); }
+            userAnswersLog.push({ question: currentQ.question, userAns: selectedOpt, correctAns: currentQ.answer, isCorrect: isCorrect });
+            setTimeout(() => { currentQuestionIndex++; showQuestion(); }, 1200);
+        }
+
+        function finishQuiz() {
+            document.getElementById("progressBar").style.width = `100%`; switchPage("resultPage");
+            let percentage = Math.round((score / quizQuestions.length) * 100);
+            document.getElementById("servantFinalReport").innerHTML = `الخادم العزيز: <strong style="color:var(--coptic-maroon)">${selectedServant}</strong><br><span style="font-size:22px; font-weight:bold; color:var(--success);">درجتك هي: ${score} من ${quizQuestions.length} (${percentage}%)</span>`;
+            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; scoresData[selectedServant] = score; localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData));
+            buildReviewSection();
+        }
+
+        function buildReviewSection() {
+            let reviewHtml = "";
+            userAnswersLog.forEach(item => {
+                let statusColor = item.isCorrect ? "var(--success)" : "var(--error)";
+                reviewHtml += `<div class="review-item"><div class="review-q">${item.question}</div><div class="review-ans" style="color:${statusColor}; font-weight:600;">إجابتك: ${item.userAns}</div>${!item.isCorrect ? `<div class="review-ans">الإجابة المعتمدة: ${item.correctAns}</div>` : ''}</div>`;
+            });
+            document.getElementById("reviewContainer").innerHTML = reviewHtml;
+        }
+
+        function toggleReview() { let section = document.getElementById("reviewSection"); let btn = document.getElementById("reviewBtn"); if (section.style.display === "none") { section.style.display = "block"; btn.innerText = "إخفاء مراجعة الإجابات"; } else { section.style.display = "none"; btn.innerText = "اضغط هنا لمعرفة إجاباتك الشخصية ومراجعتها"; } }
+        function verifyAdminPassword() { let enteredPw = document.getElementById("adminPasswordInput").value; if (enteredPw === ADMIN_PASSWORD) { document.getElementById("adminPasswordInput").value = ""; switchPage("adminPage"); loadAdminData(); } else { alert("الرقم السري غير صحيح!"); } }
+
+        function loadAdminData() {
+            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; let html = "";
+            if (Object.keys(scoresData).length === 0) { html = "<tr><td colspan='3' style='color:#888;'>لم يقم أي خادم بحل المسابقة اليوم حتى الآن.</td></tr>"; } else {
+                for (let servant in scoresData) {
+                    html += `<tr><td><strong>${servant}</strong></td><td style="color:var(--coptic-maroon); font-weight:bold;">${scoresData[servant]} / 10</td><td><button class="admin-btn" style="background:var(--success);" onclick="editScore('${servant}')">تعديل</button><button class="admin-btn" style="background:var(--error);" onclick="resetBlock('${servant}')">إلغاء حظر وإعادة</button></td></tr>`;
+                }
+            }
+            document.getElementById("adminTableBody").innerHTML = html;
+        }
+
+        function editScore(servantName) {
+            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; let currentScore = scoresData[servantName];
+            let newScore = prompt(`الدرجة الحالية لـ (${servantName}) هي ${currentScore}.\nاكتب الدرجة الجديدة (من 0 إلى 10):`, currentScore);
+            if (newScore !== null && newScore.trim() !== "") { let parsed = parseInt(newScore); if (parsed >= 0 && parsed <= 10) { scoresData[servantName] = parsed; localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData)); alert(`تم تعديل الدرجة بنجاح!`); loadAdminData(); } else { alert("برجاء إدخال رقم صحيح."); } }
+        }
+
+        function resetBlock(servantName) { if (confirm(`هل أنت متأكد من إلغاء حظر الخادم (${servantName})؟`)) { let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; delete scoresData[servantName]; localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData)); alert("تم إلغاء الحظر."); loadAdminData(); } }
+        function goToHome() { document.getElementById("servantSelect").value = ""; document.getElementById("adminPasswordInput").value = ""; switchPage("loginPage"); }
+        function switchPage(pageId) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); }
+    </script>
+</body>
+</html>
