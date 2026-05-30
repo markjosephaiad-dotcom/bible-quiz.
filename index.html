@@ -30,8 +30,7 @@
         h3 { color: var(--coptic-maroon); text-align: center; font-size: 19px; margin-bottom: 20px; }
         select, input[type="password"] { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #E0DCD5; border-radius: 10px; font-size: 16px; background-color: #FCFBF9; color: var(--text-dark); text-align: center; outline: none; }
         
-        /* زراير التحكم الأساسية */
-        .main-btn { width: 100%; background: linear-gradient(135deg, var(--coptic-maroon), #7A1717); color: var(--white); border: none; padding: 14px; font-size: 18px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
+        .main-btn { width: 100%; background: linear-gradient(135deg, var(--coptic-maroon), #7A1717); color: var(--white); border: none; padding: 14px; font-size: 18px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.3s; margin-bottom: 10px; }
         .main-btn:hover { color: var(--coptic-gold); }
         
         /* زراير الاختيارات (صح وخطأ) */
@@ -39,8 +38,8 @@
         .btn-opt { flex: 1; padding: 12px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; border: 2px solid #ECE9E4; background-color: #FDFDFD; color: var(--text-dark); }
         .btn-opt.selected { background-color: #FFF3E0; border-color: var(--coptic-gold); color: var(--coptic-maroon); }
 
-        /* زراير الاتجاهات (السابق والأمامي) */
-        .nav-wrapper { display: flex; gap: 15px; justify-content: space-between; margin-top: 10px; border-top: 1px dashed #ECE9E4; padding-top: 15px; }
+        /* شريط أزرار التنقل المعكوسة */
+        .nav-wrapper { display: flex; gap: 15px; justify-content: space-between; margin-top: 10px; border-top: 1px dashed #ECE9E4; padding-top: 15px; flex-direction: row-reverse; }
         .btn-prev { background: #757575; color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .btn-next { background: var(--coptic-maroon); color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .btn-submit { background: var(--success); color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
@@ -50,14 +49,19 @@
         .timer-box { background: #FFF3E0; color: #E65100; padding: 6px 14px; border-radius: 20px; }
         .progress-container { width: 100%; height: 6px; background: #EFEBE9; border-radius: 4px; margin-bottom: 25px; overflow: hidden; }
         .progress-bar { height: 100%; width: 0%; background: var(--coptic-gold); transition: width 0.4s ease; }
-        .question-container { display: none; }
-        .question-container.current-q { display: block; }
-        .question-text { font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 10px; }
+        .question-text { font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 20px; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        /* تصميم مراجع الإجابات */
+        .review-title { margin-top: 25px; border-top: 2px dashed #E0DCD5; padding-top: 20px; color: var(--coptic-maroon); text-align: right; }
+        .review-item { background: #FAF9F6; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-right: 4px solid var(--coptic-gold); text-align: right; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .review-q { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+        .review-ans { font-size: 15px; margin-top: 3px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; margin-bottom: 20px; }
         th, td { padding: 10px; text-align: center; border-bottom: 1px solid #ddd; }
         th { background-color: var(--coptic-maroon); color: white; }
         .admin-btn { padding: 6px 10px; font-size: 12px; background: #555; width: auto; display: inline-block; margin: 2px; border: none; color: white; border-radius: 5px; }
+        .loading-text { text-align: center; color: #888; font-style: italic; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -101,58 +105,20 @@
 
         <div id="quizPage" class="page">
             <div class="quiz-header">
-                <span id="questionCounter">السؤال 1</span>
+                <span id="questionCounter">جاري تحميل الأسئلة...</span>
                 <span class="timer-box">الوقت المتبقي: <span id="timeLeft">02:00</span></span>
             </div>
             <div class="progress-container">
                 <div id="progressBar" class="progress-bar"></div>
             </div>
             
-            <div id="questionsBlock">
-                <div class="question-container current-q" data-ans="صح" id="q0">
-                    <div class="question-text">السؤال 1: بني سليمان الحكيم الهيكل الأول في أورشليم.</div>
-                    <div class="options-wrapper">
-                        <button class="btn-opt" onclick="clickOpt(0, 'صح', this)">صح</button>
-                        <button class="btn-opt" onclick="clickOpt(0, 'خطأ', this)">خطأ</button>
-                    </div>
-                </div>
-
-                <div class="question-container" data-ans="خطأ" id="q1">
-                    <div class="question-text">السؤال 2: عدد المجامع المسكونية المعترف بها في كنيستنا هو 4 مجامع.</div>
-                    <div class="options-wrapper">
-                        <button class="btn-opt" onclick="clickOpt(1, 'صح', this)">صح</button>
-                        <button class="btn-opt" onclick="clickOpt(1, 'خطأ', this)">خطأ</button>
-                    </div>
-                </div>
-
-                <div class="question-container" data-ans="صح" id="q2">
-                    <div class="question-text">السؤال 3: النبي إرميا هو الذي لُقب بالرائي وكتب سفر المراثي.</div>
-                    <div class="options-wrapper">
-                        <button class="btn-opt" onclick="clickOpt(2, 'صح', this)">صح</button>
-                        <button class="btn-opt" onclick="clickOpt(2, 'خطأ', this)">خطأ</button>
-                    </div>
-                </div>
-
-                <div class="question-container" data-ans="خطأ" id="q3">
-                    <div class="question-text">السؤال 4: قصة صعود إيليا النبي في العاصفة نجدها في سفر ملوك الأول.</div>
-                    <div class="options-wrapper">
-                        <button class="btn-opt" onclick="clickOpt(3, 'صح', this)">صح</button>
-                        <button class="btn-opt" onclick="clickOpt(3, 'خطأ', this)">خطأ</button>
-                    </div>
-                </div>
-
-                <div class="question-container" data-ans="صح" id="q4">
-                    <div class="question-text">السؤال 5: سفر القضاة هو السفر الذي يأتي مباشرة بعد سفر يشوع.</div>
-                    <div class="options-wrapper">
-                        <button class="btn-opt" onclick="clickOpt(4, 'صح', this)">صح</button>
-                        <button class="btn-opt" onclick="clickOpt(4, 'خطأ', this)">خطأ</button>
-                    </div>
-                </div>
+            <div id="quizRenderLocation">
+                <div class="loading-text" id="fetchingStatus">يتصل الآن بـ Google Sheets لجلب أسئلة اليوم...</div>
             </div>
 
-            <div class="nav-wrapper">
-                <button class="btn-prev" id="prevBtn" onclick="goPrev()" disabled>السابق ↩</button>
+            <div class="nav-wrapper" id="navControls" style="display: none;">
                 <button class="btn-next" id="nextBtn" onclick="goNext()">الأمام ↪</button>
+                <button class="btn-prev" id="prevBtn" onclick="goPrev()" disabled>السابق ↩</button>
                 <button class="btn-submit" id="submitBtn" onclick="finishQuiz()" style="display:none;">إرسال وإنهاء المسابقة 🏁</button>
             </div>
         </div>
@@ -160,11 +126,20 @@
         <div id="resultPage" class="page">
             <h3>✙ نشكر الله ✙</h3>
             <div id="servantFinalReport" style="text-align: center; font-size: 18px; margin-bottom: 25px; line-height: 1.6;"></div>
-            <button class="main-btn" onclick="goToHome()" style="background: #666;">العودة للرئيسية</button>
+            
+            <button class="main-btn" style="background: #E65100;" onclick="toggleReviewSection()" id="reviewBtn">اضغط هنا لمعرفه اجاباتك</button>
+            
+            <div id="reviewSection" style="display: none;">
+                <h3 class="review-title">تقرير إجاباتك بالتفصيل:</h3>
+                <div id="reviewContainer"></div>
+            </div>
+
+            <button class="main-btn" onclick="goToHome()" style="background: #666; margin-top: 15px;">العودة للرئيسية</button>
         </div>
 
         <div id="adminPage" class="page">
             <h3>⚙️ لوحة تحكم أمانة الاجتماع</h3>
+            
             <table>
                 <thead>
                     <tr>
@@ -175,42 +150,73 @@
                 </thead>
                 <tbody id="adminTableBody"></tbody>
             </table>
-            <button class="main-btn" onclick="goToHome()" style="margin-top: 25px; background: var(--coptic-dark);">الخروج والعودة</button>
+
+            <button class="main-btn" style="background: #1b5e20;" onclick="exportScoresToExcel()">📥 تحميل النتائج كملف إكسيل (Excel)</button>
+            
+            <button class="main-btn" onclick="goToHome()" style="margin-top: 10px; background: var(--coptic-dark);">الخروج والعودة</button>
         </div>
     </div>
 
     <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzR7Y6Lq1H7y7Rz8VvK_U99BpxYvL8N3J9fXw/exec"; 
+        
+        let quizQuestions = []; 
         let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 120;
-        let userAnswers = {}; // لتخزين إجابات الخادم المؤقتة
-        const qContainers = document.querySelectorAll('.question-container');
+        let userAnswers = {}; 
         const DAILY_QUIZ_ID = "quiz_day_30_05_2026"; const ADMIN_PASSWORD = "1234";
+
+        async function fetchQuestionsFromSheet() {
+            try {
+                let response = await fetch(SCRIPT_URL);
+                let data = await response.json();
+                if(data && data.length > 0) {
+                    quizQuestions = data;
+                    document.getElementById("fetchingStatus").style.display = "none";
+                } else {
+                    document.getElementById("fetchingStatus").innerText = "خطأ: الشيت فارغ أو غير منسق.";
+                }
+            } catch (error) {
+                document.getElementById("fetchingStatus").innerText = "فشل الاتصال بالشيت.";
+            }
+        }
+        fetchQuestionsFromSheet();
 
         function attemptLogin() {
             selectedServant = document.getElementById("servantSelect").value;
             if (!selectedServant) { alert("برجاء اختيار اسمك أولاً."); return; }
+            if (quizQuestions.length === 0) { alert("انتظر ثانيتين لتمام التحميل من شيت جوجل ثم اضغط مجدداً."); return; }
+            
             let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
             if (scoresData[selectedServant] !== undefined) { alert(`لقد قمت بحل المسابقة اليوم بالفعل!`); return; }
             switchPage("quizPage"); startQuiz();
         }
 
-        function startQuiz() { currentIdx = 0; userAnswers = {}; showQuestion(); startTimer(); }
+        function startQuiz() { currentIdx = 0; userAnswers = {}; document.getElementById("navControls").style.display = "flex"; renderQuestion(); startTimer(); }
 
         function startTimer() {
             clearInterval(timerInterval); timeLeft = 120; updateTimerDisplay();
             timerInterval = setInterval(() => { timeLeft--; updateTimerDisplay(); if (timeLeft <= 0) { clearInterval(timerInterval); alert("انتهى الوقت المحدد للمسابقة!"); finishQuiz(); } }, 1000);
         }
 
-        function showQuestion() {
-            qContainers.forEach(el => el.classList.remove('current-q'));
-            qContainers[currentIdx].classList.add('current-q');
-            
-            document.getElementById("questionCounter").innerText = `السؤال ${currentIdx + 1} من ${qContainers.length}`;
-            document.getElementById("progressBar").style.width = `${((currentIdx + 1) / qContainers.length) * 100}%`;
+        function renderQuestion() {
+            document.getElementById("questionCounter").innerText = `السؤال ${currentIdx + 1} من ${quizQuestions.length}`;
+            document.getElementById("progressBar").style.width = `${((currentIdx + 1) / quizQuestions.length) * 100}%`;
 
-            // التحكم في ظهور وإخفاء أزرار الاتجاهات
+            let currentQ = quizQuestions[currentIdx];
+            let selectedOptSah = (userAnswers[currentIdx] === "صح") ? "selected" : "";
+            let selectedOptKhata = (userAnswers[currentIdx] === "خطأ") ? "selected" : "";
+
+            let html = `
+                <div class="question-text">${currentQ.question}</div>
+                <div class="options-wrapper">
+                    <button class="btn-opt ${selectedOptSah}" onclick="clickOpt(${currentIdx}, 'صح', this)">صح</button>
+                    <button class="btn-opt ${selectedOptKhata}" onclick="clickOpt(${currentIdx}, 'خطأ', this)">خطأ</button>
+                </div>
+            `;
+            document.getElementById("quizRenderLocation").innerHTML = html;
+
             document.getElementById("prevBtn").disabled = (currentIdx === 0);
-            
-            if (currentIdx === qContainers.length - 1) {
+            if (currentIdx === quizQuestions.length - 1) {
                 document.getElementById("nextBtn").style.display = "none";
                 document.getElementById("submitBtn").style.display = "inline-block";
             } else {
@@ -223,29 +229,56 @@
 
         function clickOpt(qIdx, answerValue, btnEl) {
             userAnswers[qIdx] = answerValue;
-            // إزالة التحديد عن باقي الزراير في نفس السؤال وتحديد الزرار المضغوط
-            let siblingBtns = qContainers[qIdx].querySelectorAll('.btn-opt');
+            let siblingBtns = btnEl.parentElement.querySelectorAll('.btn-opt');
             siblingBtns.forEach(b => b.classList.remove('selected'));
             btnEl.classList.add('selected');
         }
 
-        function goNext() { if (currentIdx < qContainers.length - 1) { currentIdx++; showQuestion(); } }
-        function goPrev() { if (currentIdx > 0) { currentIdx--; showQuestion(); } }
+        function goNext() { if (currentIdx < quizQuestions.length - 1) { currentIdx++; renderQuestion(); } }
+        function goPrev() { if (currentIdx > 0) { currentIdx--; renderQuestion(); } }
 
         function finishQuiz() {
             clearInterval(timerInterval);
             let score = 0;
-            qContainers.forEach((container, idx) => {
-                let correctAns = container.getAttribute('data-ans');
-                if (userAnswers[idx] && userAnswers[idx] === correctAns) { score++; }
+            let reviewHtml = ""; 
+
+            quizQuestions.forEach((q, idx) => {
+                let servantAns = userAnswers[idx] ? userAnswers[idx].trim() : "لم يحل";
+                let modelAns = q.answer ? q.answer.trim() : "";
+                let isCorrect = (servantAns === modelAns);
+                
+                if (isCorrect) { score++; }
+
+                let badgeColor = isCorrect ? "var(--success)" : "var(--error)";
+                reviewHtml += `
+                    <div class="review-item">
+                        <div class="review-q">${q.question}</div>
+                        <div class="review-ans" style="color: ${badgeColor}; font-weight: bold;">إجابتك: ${servantAns} ${isCorrect ? '✅' : '❌'}</div>
+                        ${!isCorrect ? `<div class="review-ans" style="color: #555;">الإجابة الصحيحة كانت: ${modelAns}</div>` : ''}
+                    </div>
+                `;
             });
 
+            document.getElementById("reviewContainer").innerHTML = reviewHtml;
+
             switchPage("resultPage");
-            document.getElementById("servantFinalReport").innerHTML = `الخادم: <strong>${selectedServant}</strong><br><span style="font-size:22px; font-weight:bold; color:var(--success);">درجتك: ${score} من ${qContainers.length}</span>`;
+            document.getElementById("servantFinalReport").innerHTML = `الخادم: <strong>${selectedServant}</strong><br><span style="font-size:22px; font-weight:bold; color:var(--success);">درجتك: ${score} من ${quizQuestions.length}</span>`;
             
             let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; 
             scoresData[selectedServant] = score; 
             localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData));
+        }
+
+        function toggleReviewSection() {
+            let section = document.getElementById("reviewSection");
+            let btn = document.getElementById("reviewBtn");
+            if (section.style.display === "none") {
+                section.style.display = "block";
+                btn.innerText = "إخفاء تقرير الإجابات 📜";
+            } else {
+                section.style.display = "none";
+                btn.innerText = "اضغط هنا لمعرفه اجاباتك";
+            }
         }
 
         function verifyAdminPassword() { if (document.getElementById("adminPasswordInput").value === ADMIN_PASSWORD) { document.getElementById("adminPasswordInput").value = ""; switchPage("adminPage"); loadAdminData(); } else { alert("خاطئ!"); } }
@@ -254,14 +287,43 @@
             let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; let html = "";
             if (Object.keys(scoresData).length === 0) { html = "<tr><td colspan='3'>لا يوجد بيانات.</td></tr>"; } else {
                 for (let servant in scoresData) {
-                    html += `<tr><td><strong>${servant}</strong></td><td>${scoresData[servant]} / ${qContainers.length}</td><td><button class="admin-btn" style="background:var(--error);" onclick="resetBlock('${servant}')">مسح وإعادة</button></td></tr>`;
+                    html += `<tr><td><strong>${servant}</strong></td><td>${scoresData[servant]} / ${quizQuestions.length}</td><td><button class="admin-btn" style="background:var(--error);" onclick="resetBlock('${servant}')">مسح وإعادة</button></td></tr>`;
                 }
             }
             document.getElementById("adminTableBody").innerHTML = html;
         }
 
+        // دالة تصدير وتحميل ملف الإكسيل (CSV)
+        function exportScoresToExcel() {
+            let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
+            if (Object.keys(scoresData).length === 0) { alert("لا توجد نتائج مسجلة حتى الآن لتصديرها."); return; }
+            
+            // بناء محتوى الملف باللغة العربية
+            let csvContent = "الخادم,الدرجة\n";
+            for (let servant in scoresData) {
+                csvContent += `${servant},${scoresData[servant]}\n`;
+            }
+            
+            // إضافة رمز الـ BOM لضمان قراءة ملف الإكسيل للغة العربية بدون مشاكل
+            let blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: "text/csv;charset=utf-8;" });
+            let link = document.createElement("a");
+            
+            let url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `نتائج_مسابقة_أبي_سيفين_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         function resetBlock(servantName) { let scoresData = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {}; delete scoresData[servantName]; localStorage.setItem(DAILY_QUIZ_ID + "_scores", JSON.stringify(scoresData)); loadAdminData(); }
-        function goToHome() { document.getElementById("servantSelect").value = ""; switchPage("loginPage"); }
+        function goToHome() { 
+            document.getElementById("servantSelect").value = ""; 
+            document.getElementById("reviewSection").style.display = "none";
+            document.getElementById("reviewBtn").innerText = "اضغط هنا لمعرفه اجاباتك";
+            switchPage("loginPage"); 
+        }
         function switchPage(pageId) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); }
     </script>
 </body>
