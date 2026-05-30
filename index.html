@@ -96,7 +96,7 @@
                 <img src="abusafein.jpg" alt="أبي سيفين" class="saint-img">
                 <img src="virgin.jpg" alt="السيدة العذراء" class="saint-img">
             </div>
-            <div class="loading-text" id="globalStatus">⚡ جاري قراءة البيانات الآمنة من الجوجل شيت مباشرة بفصل تام...</div>
+            <div class="loading-text" id="globalStatus">⚡ جاري قراءة الأسئلة والأصحاح بشكل منفصل وآمن...</div>
         </div>
 
         <div id="loginPage" class="page">
@@ -134,13 +134,13 @@
                 <option value="رمزي سعيد">رمزي سعيد</option>
                 <option value="رؤوف خير">رؤوف خير</option>
                 <option value="سارة عماد">سارة عماد</option>
-                <option value="ساندرا جورج">ساندرا جورج</option>
+                <option value="sandra_george">ساندرا جورج</option>
                 <option value="سامية جريس">سامية جريس</option>
                 <option value="سمر جادالرب">سمر جادالرب</option>
                 <option value="سماح حلمي">سماح حلمي</option>
                 <option value="سماح نعيم">سماح نعيم</option>
                 <option value="سمير زكي">سمير زكي</option>
-                <option value="سناء سعيد">سناء سعيد</option>
+                <option value="sanaa_saeed">سناء سعيد</option>
                 <option value="شريف شهدي">شريف شهدي</option>
                 <option value="شكرالله نصر">شكرالله نصر</option>
                 <option value="شيري شهدي">شيري شهدي</option>
@@ -214,7 +214,7 @@
             </div>
 
             <div class="chapter-box" id="chapterTextContainer">
-                جاري تحميل نص الأصحاح من الشيت الثاني...
+                جاري تحميل نص الأصحاح من الرابط المخصص...
             </div>
 
             <button class="main-btn" onclick="exitChapterPage()" style="background: var(--coptic-dark);">العودة لصفحة الدخول والامتحان</button>
@@ -246,7 +246,7 @@
         </div>
 
         <div id="resultPage" class="page">
-            <h3>✙  استلمنا الاجابات نشكر الله ✙</h3>
+            <h3>✙ استلمنا الاجابات نشكر الله ✙</h3>
             <div id="servantFinalReport" style="text-align: center; font-size: 18px; margin-bottom: 25px; line-height: 1.6;"></div>
             
             <button class="main-btn" style="background: #E65100;" onclick="toggleReviewSection()" id="reviewBtn">اضغط هنا لمعرفه اجاباتك</button>
@@ -291,15 +291,18 @@
     </div>
 
     <script>
-        // ⚠️ ضَع رابط تعديل الشيت المباشر الخاص بك هنا بدلاً من هذا الرابط الافتراضي
+        // ⚠️ 1. ضَع رابط تعديل الشيت المباشر (رابط المتصفح للأسئلة والاجابات) هنا:
         const BASE_SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg";
+
+        // 🔗 2. رابط الـ CSV المخصص للأصحاح اليومي الذي أرسلته (ثابت ومفصول بالكامل):
+        const CHAPTER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlHtC2XhIAwgkBPyOKvgS40OJ8JiYHt_019eGTHb9ltGaxc-oV6gT2QS924VOBSFZMv0N7d2OnzRBe/pub?output=csv";
 
         const SERVANT_PASSWORDS = {
             "ايريني سمير": "1", "ايريني عاطف": "2", "امال سامي": "3", "ثناء زكريا": "4", "جاكلين سعيد": "5",
             "جانيت ويصا": "6", "جورج فايز": "7", "جمال حنا": "8", "جيرمين زاهر": "9", "جيهان شحاتة": "10",
             "جيهان ماهر": "11", "رأفت خير": "12", "رامز امير": "13", "رامي سعيد": "14", "رمزي سعيد": "15",
             "رؤوف خير": "16", "سارة عماد": "17", "ساندرا جورج": "18", "سامية جريس": "19", "سمر جادالرب": "20",
-            "سماح حلمي": "21", "سماح نعيم": "22", "سمير زكي": "23", "سناء سعيد": "24", "شريف شهدي": "25",
+            "s_helmy": "21", "سماح نعيم": "22", "سمير زكي": "23", "سناء سعيد": "24", "شريف شهدي": "25",
             "شكرالله نصر": "26", "شيري شهدي": "27", "صفاء سمير": "28", "صفاء عادلي": "29", "توني هاني": "30",
             "عادل فرج": "31", "عايدة معوض": "32", "عايده يعقوب": "33", "عدلي رمزي": "34", "عماد سمير": "35",
             "فادي سليمان": "36", "فادي كحيل": "37", "فيوليت فوزي": "38", "كمال كريم": "39", "كريستين نصر": "40",
@@ -353,7 +356,7 @@
             } else { document.getElementById("passwordArea").style.display = "none"; }
         }
 
-        // دالة جلب البيانات الذكية عبر محاكي استعلامات جوجل لضمان الفصل التام بين الشيتات
+        // دالة جلب بيانات الأسئلة عن طريق Google Visualization API (مضمونة لشيت 1)
         async function fetchSheetData(sheetName, query) {
             let cleanUrl = BASE_SPREADSHEET_URL.replace(/\/edit.*$/, '');
             let url = `${cleanUrl}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&tq=${encodeURIComponent(query)}`;
@@ -361,6 +364,22 @@
             let text = await response.text();
             let jsonString = text.match(/google\.visualization\.Query\.setResponse\(([\s\S\x00-\x7F]+)\);/)[1];
             return JSON.parse(jsonString).table.rows;
+        }
+
+        // دالة لقراءة ملف الـ CSV المخصص للأصحاح وتجاوز السطر الأول تلقائياً
+        async function fetchChapterFromCSV() {
+            let res = await fetch(CHAPTER_CSV_URL);
+            let csvText = await res.text();
+            
+            // تقسيم الأسطر وتنظيفها من علامات الاقتباس الزائدة الناتجة عن الـ CSV
+            let lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length > 1) {
+                // نأخذ السطر الثاني مباشرة لتجنب تكرار كلمة "الأصحاح" أو العناوين
+                return lines[1].replace(/^"|"$/g, '').replace(/""/g, '"');
+            } else if (lines.length === 1) {
+                return lines[0].replace(/^"|"$/g, '').replace(/""/g, '"');
+            }
+            return "ملف الأصحاح فارغ.";
         }
 
         async function fetchAllData() {
@@ -383,16 +402,11 @@
                     }
                 });
 
-                // 2. جلب نص الأصحاح المنفصل تماماً من صفحة الشيت المسماة Sheet2
+                // 2. جلب نص الأصحاح المنفصل والمستقل تماماً من الرابط الجديد اللي أنت بعته
                 try {
-                    let chRows = await fetchSheetData("Sheet2", "SELECT A LIMIT 2");
-                    if(chRows.length > 0 && chRows[0].c && chRows[0].c[0]) {
-                        bibleChapterText = String(chRows[0].c[0].v).trim();
-                    } else {
-                        bibleChapterText = "نص الأصحاح فارغ بالشيت الثاني.";
-                    }
+                    bibleChapterText = await fetchChapterFromCSV();
                 } catch(e) {
-                    bibleChapterText = "تنبيه: تأكد من تسمية الشيت الثاني بـ Sheet2 لكتابة الأصحاح.";
+                    bibleChapterText = "تنبيه: تعذر جلب الأصحاح، تأكد من نشر الرابط الثاني كـ CSV بشكل صحيح.";
                 }
 
                 document.getElementById("chapterTextContainer").innerText = bibleChapterText;
@@ -402,7 +416,7 @@
 
             } catch (error) {
                 console.error(error);
-                document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ تعذر الاتصال بجوجل شيت. يرجى مراجعة رابط تعديل الملف BASE_SPREADSHEET_URL في الكود.</span>`;
+                document.getElementById("globalStatus").innerHTML = `<span style="color:var(--error);">⚠️ تعذر الاتصال بجوجل شيت. يرجى مراجعة الرابط BASE_SPREADSHEET_URL في الكود.</span>`;
             }
         }
 
