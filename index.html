@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مسابقات دراسة الكتاب المقدس | أبي سيفين</title>
+    <title> مسابقات دراسة الكتاب المقدس | أبي سيفين</title>
     <style>
         :root {
             --coptic-maroon: #580F0F; 
@@ -28,7 +28,7 @@
         .images-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .saint-img { width: 130px; height: 170px; object-fit: cover; border-radius: 12px; border: 3px solid var(--coptic-gold); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
         h3 { color: var(--coptic-maroon); text-align: center; font-size: 19px; margin-bottom: 20px; }
-        select, input[type="password"], input[type="number"] { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #E0DCD5; border-radius: 10px; font-size: 16px; background-color: #FCFBF9; color: var(--text-dark); text-align: center; outline: none; }
+        select, input[type="password"], input[type="number"], input[type="text"] { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #E0DCD5; border-radius: 10px; font-size: 16px; background-color: #FCFBF9; color: var(--text-dark); text-align: center; outline: none; }
         
         .main-btn { width: 100%; background: linear-gradient(135deg, var(--coptic-maroon), #7A1717); color: var(--white); border: none; padding: 14px; font-size: 18px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.3s; margin-bottom: 10px; }
         .main-btn:hover { color: var(--coptic-gold); }
@@ -37,7 +37,6 @@
         .btn-opt { width: 100%; padding: 14px; font-size: 16px; text-align: right; font-weight: 500; border-radius: 8px; cursor: pointer; border: 2px solid #ECE9E4; background-color: #FDFDFD; color: var(--text-dark); transition: all 0.2s; }
         .btn-opt.selected { background-color: #FFF3E0; border-color: var(--coptic-gold); color: var(--coptic-maroon); font-weight: bold; box-shadow: 0 3px 8px rgba(197, 160, 89, 0.2); }
 
-        /* شريط التنقل المتطور: الأمام يمين والسابق شمال بالملي */
         .nav-wrapper { display: flex; gap: 15px; justify-content: space-between; margin-top: 10px; border-top: 1px dashed #ECE9E4; padding-top: 15px; flex-direction: row; }
         .btn-prev { background: #757575; color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; order: 2; }
         .btn-next { background: var(--coptic-maroon); color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; order: 1; }
@@ -71,7 +70,7 @@
 
     <header>
         <h1>كنيسة الشهيد العظيم فيلوباتير مرقوريوس أبي سيفين - بمدينة عامر</h1>
-        <h2>اجتماع الخدام | منصة مسابقات دراسة الكتاب المقدس اليومية</h2>
+        <h2>اجتماع الخدام | مسابقات دراسة الكتاب المقدس اليومية</h2>
         <div class="cross-icon">✙ ✙ ✙</div>
     </header>
 
@@ -90,15 +89,86 @@
                 <img src="virgin.jpg" alt="السيدة العذراء" class="saint-img">
             </div>
             <h3>باسم الآب والابن والروح القدس الإله الواحد.. آمين</h3>
-            <p style="text-align: center; margin-bottom: 15px; font-size: 14px; color:#777;">من فضلك اختر اسمك من القائمة أدناه لبدء المسابقة اليومية:</p>
+            <p style="text-align: center; margin-bottom: 15px; font-size: 14px; color:#777;">من فضلك اختر اسمك واكتب الكود السري الخاص بك لبدء المسابقة:</p>
             
-            <select id="servantSelect">
+            <select id="servantSelect" onchange="handleNameChange()">
                 <option value="">-- اختر اسمك يا خادم من هنا --</option>
-                <option value="عادل فرج">عادل فرج</option>
+                <option value="ايريني عاطق">ايريني عاطق</option>
+                <option value="ايريني سمير">ايريني سمير</option>
+                <option value="امال سامي">امال سامي</option>
+                <option value="ثناء زكريا">ثناء زكريا</option>
+                <option value="جاكلين سعيد">جاكلين سعيد</option>
+                <option value="جانيت ويصا">جانيت ويصا</option>
+                <option value="جرورج فايز">جرورج فايز</option>
+                <option value="جمال حنا">جمال حنا</option>
+                <option value="جيرمين زاهر">جيرمين زاهر</option>
                 <option value="جيهان شحاتة">جيهان شحاتة</option>
-                <option value="وائل ماهر">وائل ماهر</option>
+                <option value="جيهان ماهر">جيهان ماهر</option>
+                <option value="رأفت خير">رأفت خير</option>
+                <option value="رامز امير">رامز امير</option>
+                <option value="رامي سعيد">رامي سعيد</option>
+                <option value="رمزي سعيد">رمزي سعيد</option>
+                <option value="سارة عماد">سارة عماد</option>
+                <option value="sandra_george">ساندرا جورج</option>
+                <option value="سمر جادالرب">سمر جادالرب</option>
+                <option value="سماح حلمي">سماح حلمي</option>
+                <option value="سماح نعيم">سماح نعيم</option>
+                <option value="سمير زكي">سمير زكي</option>
+                <option value="سناء سعيد">سناء سعيد</option>
+                <option value="شريف شهدي">شريف شهدي</option>
+                <option value="شكرالله نصر">شكرالله نصر</option>
+                <option value="صفاء عادلي">صفاء عادلي</option>
+                <option value="صفاء سمير">صفاء سمير</option>
+                <option value="عادل فرج">عادل فرج</option>
+                <option value="عايده يعقوب">عايده يعقوب</option>
+                <option value="عايدة معوض">عايدة معوض</option>
+                <option value="عدلي رمزي">عدلي رمزي</option>
                 <option value="عماد سمير">عماد سمير</option>
+                <option value="فادي سليمان">فادي سليمان</option>
+                <option value="فادي كحيل">فادي كحيل</option>
+                <option value="ماري عادل">ماري عادل</option>
+                <option value="ماري وجيه">ماري وجيه</option>
+                <option value="ماريان مجدي">ماريان مجدي</option>
+                <option value="ماريانا ادورد">مريانا ادورد</option>
+                <option value="مريان عادل">مريان عادل</option>
+                <option value="مريم عماد">مريم عماد</option>
+                <option value="مريم مكرم">مريم مكرم</option>
+                <option value="ميرفت يعقوب">ميرفت يعقوب</option>
+                <option value="ميرنا عماد">ميرنا عماد</option>
+                <option value="مارينا اشرف">مارينا اشرف</option>
+                <option value="مينا مجدي">مينا مجدي</option>
+                <option value="مينا اشرف">مينا اشرف</option>
+                <option value="مني ميشيل">مني ميشيل</option>
+                <option value="ناهد فاروق">ناهد فاروق</option>
+                <option value="نرمين سليمان">نرمين سليمان</option>
+                <option value="نرجس خير">نرجس خير</option>
+                <option value="نعمة عبدالسيد">نعمة عبدالسيد</option>
+                <option value="وائل ماهر">وائل ماهر</option>
+                <option value="ورده ماهر">ورده ماهر</option>
+                <option value="ورؤوف خير">ورؤوف خير</option>
+                <option value="ياسر نبيه">ياسر نبيه</option>
+                <option value="يوسف وليم">يوسف وليم</option>
+                <option value="يوستينا رأفت">يوستينا رأفت</option>
+                <option value="فيوليت فوزي">فيوليت فوزي</option>
+                <option value="شيري شهدي">شيري شهدي</option>
+                <option value="توني هاني">توني هاني</option>
+                <option value="كيرلس اسامه">كيرلس اسامه</option>
+                <option value="كيرلس فادي">كيرلس فادي</option>
+                <option value="كيرلس يوسف">كيرلس يوسف</option>
+                <option value="كرسيتين نصر">كرسيتين نصر</option>
+                <option value="كمال كريم">كمال كريم</option>
+                <option value="كريم شكرالله">كريم شكرالله</option>
+                <option value="ليلي وهيب">ليلي وهيب</option>
+                <option value="ماجدة نجيب">ماجدة نجيب</option>
+                <option value="ماركو مجدي">ماركو مجدي</option>
+                <option value="هيلانة جروج">هيلانة جروج</option>
+                <option value="سامية جريس">سامية جريس</option>
             </select>
+            
+            <div id="passwordArea" style="display: none;">
+                <p style="text-align: center; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: var(--coptic-maroon);">مربع كتابة الكود السري الخاص بك 🔑:</p>
+                <input type="password" id="servantPasswordInput" maxlength="4" placeholder="اكتب كودك المكون من 4 أرقام هنا..." style="border: 2px solid var(--coptic-gold);">
+            </div>
             
             <button class="main-btn" onclick="attemptLogin()">ابدأ المسابقة اليومية</button>
             
@@ -117,7 +187,7 @@
         <div id="quizPage" class="page">
             <div class="quiz-header">
                 <span id="questionCounter">تحضير الأسئلة...</span>
-                <span class="timer-box">الوقت المتبقي: <span id="timeLeft">02:00</span></span>
+                <span class="timer-box">الوقت المتبقي: <span id="timeLeft">03:00</span></span>
             </div>
             <div class="progress-container">
                 <div id="progressBar" class="progress-bar"></div>
@@ -133,7 +203,7 @@
         </div>
 
         <div id="resultPage" class="page">
-            <h3>✙ نشكر الله ✙</h3>
+            <h3>✙ استلمنا نشكر الله ✙</h3>
             <div id="servantFinalReport" style="text-align: center; font-size: 18px; margin-bottom: 25px; line-height: 1.6;"></div>
             
             <button class="main-btn" style="background: #E65100;" onclick="toggleReviewSection()" id="reviewBtn">اضغط هنا لمعرفه اجاباتك</button>
@@ -177,11 +247,42 @@
     <script>
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQATB615cDv6gnBZdVqUNJV8f7WTaA4p8nLuiV8uBJfGKUz5fFBP5UT6-XQTRyTumgZIBv_h9Pt64mg/pub?output=csv"; 
         
+        // مصفوفة الأرقام السرية الثابتة للخدام
+        const SERVANT_PASSWORDS = {
+            "ايريني عاطق": "1001", "ايريني سمير": "1002", "امال سامي": "1003", "ثناء زكريا": "1004", "جاكلين سعيد": "1005",
+            "جانيت ويصا": "1006", "جرورج فايز": "1007", "جمال حنا": "1008", "جيرمين زاهر": "1009", "جيهان شحاتة": "1010",
+            "جيهان ماهر": "1011", "رأفت خير": "1012", "رامز امير": "1013", "رامي سعيد": "1014", "رمزي سعيد": "1015",
+            "سارة عماد": "1016", "sandra_george": "1017", "سمر جادالرب": "1018", "سماح حلمي": "1019", "سماح نعيم": "1020",
+            "سمير زكي": "1021", "sناء سعيد": "1022", "شريف شهدي": "1023", "شكرالله نصر": "1024", "صفاء عادلي": "1025",
+            "صفاء سمير": "1026", "عادل فرج": "1027", "عايده يعقوب": "1028", "عايدة معوض": "1029", "عدلي رمزي": "1030",
+            "عماد سمير": "1031", "فادي سليمان": "1032", "فادي كحيل": "1033", "ماري عادل": "1034", "ماري وجيه": "1035",
+            "ماريان مجدي": "1036", "ماريانا ادورد": "1037", "مريان عادل": "1038", "مريم عماد": "1039", "مريم مكرم": "1040",
+            "ميرفت يعقوب": "1041", "ميرنا عماد": "1042", "مارينا اشرف": "1043", "مينا مجدي": "1044", "مينا اشرف": "1045",
+            "مني ميشيل": "1046", "ناهد فاروق": "1047", "نرمين سليمان": "1048", "نرجس خير": "1049", "نعمة عبدالسيد": "1050",
+            "وائل ماهر": "1051", "ورده ماهر": "1052", "ورؤوف خير": "1053", "ياسر نبيه": "1054", "يوسف وليم": "1055",
+            "يوستينا رأفت": "1056", "فيوليت فوزي": "1057", "شيري شهدي": "1058", "توني هاني": "1059", "كيرلس اسامه": "1060",
+            "كيرلس فادي": "1061", "كيرلس يوسف": "1062", "كرسيتين نصر": "1063", "كمال كريم": "1064", "كريم شكرالله": "1065",
+            "ليلي وهيب": "1066", "ماجدة نجيب": "1067", "ماركو مجدي": "1068", "هيلانة جروج": "1069", "سامية جريس": "1070"
+        };
+
         let quizQuestions = []; 
         let selectedServant = ""; let currentIdx = 0; let timerInterval; let timeLeft = 120;
         let userAnswers = {}; 
-        const DAILY_QUIZ_ID = "quiz_day_30_05_2026"; const ADMIN_PASSWORD = "1234";
+        const todayDate = new Date().toLocaleDateString('en-GB').replace(/\//g, '_');
+        const DAILY_QUIZ_ID = "quiz_day_" + todayDate;const ADMIN_PASSWORD = "284655";
         let currentEditingServant = ""; 
+
+        function handleNameChange() {
+            let name = document.getElementById("servantSelect").value;
+            let passArea = document.getElementById("passwordArea");
+            if (name !== "") {
+                passArea.style.display = "block";
+                document.getElementById("servantPasswordInput").value = "";
+                document.getElementById("servantPasswordInput").focus();
+            } else {
+                passArea.style.display = "none";
+            }
+        }
 
         function parseCSV(text) {
             let lines = []; let row = [""]; let inQuotes = false;
@@ -205,17 +306,13 @@
                 
                 if (parsedData.length > 1) {
                     quizQuestions = [];
-                    // بنبدأ من السطر رقم 1 لتخطي سطر العناوين (السؤال، الاختيار 1...)
                     for (let i = 1; i < parsedData.length; i++) {
                         let r = parsedData[i];
                         if (r.length >= 2 && r[0] && r[0].trim() !== "") {
                             let cellCheck = r[0].trim();
-                            
-                            // نظام الفلترة الذكي: لو السطر يحتوي على أكواد أو روابط أو فاضي بيتم تجاهله فوراً
                             if (cellCheck.includes("const") || cellCheck.includes("CSV_URL") || cellCheck.startsWith("/") || cellCheck.includes("http") || cellCheck === "") {
                                 continue; 
                             }
-                            
                             quizQuestions.push({
                                 question: r[0].trim(),
                                 option1: r[1] ? r[1].trim() : "",
@@ -226,8 +323,6 @@
                             });
                         }
                     }
-                    
-                    // تشغيل الموقع فوراً بمجرد تصفية الأسئلة بنجاح
                     if (quizQuestions.length > 0) { 
                         switchPage("loginPage"); 
                     } else { 
@@ -244,7 +339,17 @@
 
         function attemptLogin() {
             selectedServant = document.getElementById("servantSelect").value;
-            if (!selectedServant) { alert("برجاء اختيار اسمك أولاً."); return; }
+            let typedPassword = document.getElementById("servantPasswordInput").value.trim();
+
+            if (!selectedServant) { alert("برجاء اختيار اسمك ."); return; }
+            if (!typedPassword) { alert("من فضلك اكتب الكود السري الخاص بك ."); return; }
+            
+            // نظام التحقق الفوري من الكود السري الخاص بالخادم
+            let correctPass = SERVANT_PASSWORDS[selectedServant];
+            if (typedPassword !== correctPass) {
+                alert("⚠️ عذراً! الكود السري الذي كتبته غير صحيح ومخالف لاسمك. يرجى مراجعة أمانة الاجتماع.");
+                return;
+            }
             
             let allScores = JSON.parse(localStorage.getItem(DAILY_QUIZ_ID + "_scores")) || {};
             if (allScores[selectedServant] !== undefined) { alert(`لقد قمت بحل المسابقة اليوم بالفعل!`); return; }
@@ -265,7 +370,6 @@
             
             let html = `<div class="question-text">${currentQ.question}</div><div class="options-vertical-wrapper">`;
             
-            // عرض الاختيارات المليانة فقط (لو صح وخطأ يعرض زرارين بس وميظهرش زراير فاضية)
             if (currentQ.option1 && currentQ.option1.trim() !== "") {
                 let s1 = (userAnswers[currentIdx] === currentQ.option1) ? "selected" : "";
                 html += `<button class="btn-opt ${s1}" onclick="clickOpt(${currentIdx}, '${currentQ.option1.replace(/'/g, "\\'")}', this)">${currentQ.option1}</button>`;
@@ -374,7 +478,7 @@
                 html += `
                     <div class="edit-q-block">
                         <p style="font-weight:bold; font-size:14px; margin-bottom:5px;">س${idx+1}: ${q.question}</p>
-                        <p style="font-size:12px; color:var(--success);">الإجابة الصحيحة النموذجية: ${q.answer}</p>
+                        <p style="font-size:12px; color:var(--success);">الإجابة الصحيحة : ${q.answer}</p>
                         <select id="edit_q_select_${idx}" class="edit-select">
                             <option value="لم يحل" ${currentChosen === 'لم يحل' ? 'selected' : ''}>-- لم يحل --</option>
                             ${q.option1 ? `<option value="${q.option1}" ${currentChosen === q.option1 ? 'selected' : ''}>${q.option1}</option>` : ''}
@@ -434,7 +538,14 @@
             }
         }
         
-        function goToHome() { document.getElementById("servantSelect").value = ""; document.getElementById("reviewSection").style.display = "none"; document.getElementById("reviewBtn").innerText = "اضغط هنا لمعرفه اجاباتك"; switchPage("loginPage"); }
+        function goToHome() { 
+            document.getElementById("servantSelect").value = ""; 
+            document.getElementById("passwordArea").style.display = "none";
+            document.getElementById("servantPasswordInput").value = "";
+            document.getElementById("reviewSection").style.display = "none"; 
+            document.getElementById("reviewBtn").innerText = "اضغط هنا لمعرفه اجاباتك"; 
+            switchPage("loginPage"); 
+        }
         function switchPage(pageId) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); }
     </script>
 </body>
