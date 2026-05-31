@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام مسابقات كنيسة أبي سيفين</title>
+    <title>مسابقات دراسة الكتاب المقدس | أبي سيفين</title>
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=9E66FmsY"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        :root { --coptic-maroon: #580F0F; --bg-cream: #FAF8F5; }
-        body { font-family: sans-serif; background: var(--bg-cream); padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        :root { --coptic-maroon: #580F0F; --coptic-gold: #C5A059; --bg-cream: #FAF8F5; --white: #FFFFFF; --error: #b71c1c; }
+        body { font-family: sans-serif; background-color: var(--bg-cream); padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .page { display: none; } .active { display: block; }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; }
-        button { background: var(--coptic-maroon); color: white; border: none; cursor: pointer; font-weight: bold; }
+        select, input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; }
+        button { background: var(--coptic-maroon); color: white; font-weight: bold; cursor: pointer; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-        .actions { display: flex; gap: 5px; justify-content: center; }
-        .btn-small { padding: 5px 8px; font-size: 12px; }
+        .reset-btn { background: var(--error); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -23,32 +23,32 @@
 <div class="container">
     <div id="settingsPage" class="page active">
         <h2>إعدادات النظام (رفع ملفات الإكسيل)</h2>
-        <input type="file" id="questionsExcel" onchange="processFile(this, 'questions')">
-        <input type="file" id="chapterExcel" onchange="processFile(this, 'chapter')">
+        <input type="file" id="quizFile" onchange="loadExcel(this, 'questions')">
+        <input type="file" id="chapterFile" onchange="loadExcel(this, 'chapter')">
         <button onclick="switchPage('loginPage')">دخول الخدام</button>
     </div>
 
     <div id="loginPage" class="page">
-        <h2>تسجيل دخول</h2>
-        <select id="servantSelect"><option>-- اختر اسمك --</option></select>
-        <input type="password" id="pass" placeholder="الكود السري">
-        <button onclick="login()">دخول</button>
-        <button style="background:#333" onclick="switchPage('adminPage')">لوحة التحكم</button>
+        <h2>تسجيل دخول الخادم</h2>
+        <select id="servantSelect"><option value="">-- اختر اسمك --</option></select>
+        <input type="number" id="pass" placeholder="الكود السري">
+        <button onclick="login()">دخول الامتحان</button>
+        <button style="background:#555;" onclick="switchPage('adminPage')">لوحة التحكم</button>
     </div>
 
     <div id="adminPage" class="page">
-        <h2>النتائج</h2>
+        <h2>لوحة التحكم</h2>
         <table id="adminTable">
             <thead><tr><th>الاسم</th><th>الدرجة</th><th>إجراءات</th></tr></thead>
             <tbody id="adminBody"></tbody>
         </table>
-        <button onclick="switchPage('settingsPage')">الرجوع للإعدادات</button>
+        <button style="background:#333;" onclick="switchPage('loginPage')">رجوع</button>
+        <button style="background:#2e7d32;" onclick="downloadExcelReport()">تصدير النتائج (Excel)</button>
     </div>
 </div>
 
 <script>
-    // 1. البيانات الثابتة للخدام
-    const SERVANTS = {
+    const SERVANT_PASSWORDS = {
         "ابراهيم عادل": "1", "ابو الخير": "2", "ايريني سمير": "3", "ايريني عاطف": "4", "امال سامي": "5",
         "توني هاني": "6", "ثناء زكريا": "7", "جاكلين سعيد": "8", "جانيت ويصا": "9", "جمال حنا": "10",
         "جورج فايز": "11", "جيرمين زاهر": "12", "جيهان شحاتة": "13", "جيهان ماهر": "14", "رأفت خير": "15",
@@ -65,22 +65,21 @@
         "نعمة عبدالسيد": "66", "هيلانة جورج": "67", "وائل ماهر": "68", "ورده ماهر": "69", "ياسر نبيه": "70"
     };
 
-    // 2. تعبئة القائمة تلقائياً
+    // تعبئة القائمة
     const select = document.getElementById('servantSelect');
-    Object.keys(SERVANTS).sort().forEach(name => {
+    Object.keys(SERVANT_PASSWORDS).sort().forEach(name => {
         let opt = document.createElement('option');
         opt.value = name; opt.innerHTML = name;
         select.appendChild(opt);
     });
 
-    // 3. وظائف التنقل والإدارة
     function switchPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(id === 'adminPage') updateAdminTable();
+        if(id === 'adminPage') renderAdmin();
     }
 
-    function processFile(input, type) {
+    function loadExcel(input, type) {
         const file = input.files[0];
         const reader = new FileReader();
         reader.onload = e => {
@@ -88,29 +87,47 @@
             const workbook = XLSX.read(data, {type: 'array'});
             const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
             localStorage.setItem("data_" + type, JSON.stringify(json));
-            alert("تم حفظ ملف " + type);
+            alert("تم تحميل " + type + " بنجاح!");
         };
         reader.readAsArrayBuffer(file);
     }
 
-    function updateAdminTable() {
+    function renderAdmin() {
         let scores = JSON.parse(localStorage.getItem("scores")) || {};
-        let body = document.getElementById('adminBody');
-        body.innerHTML = "";
-        for(let name in scores) {
-            body.innerHTML += `<tr><td>${name}</td><td>${scores[name]}</td>
-            <td class="actions">
-                <button class="btn-small" onclick="editScore('${name}')">تعديل</button>
-                <button class="btn-small" style="background:#b71c1c" onclick="deleteRecord('${name}')">مسح</button>
+        let html = "";
+        for (let name in scores) {
+            html += `<tr><td>${name}</td><td>${scores[name]}</td>
+            <td>
+                <button onclick="editScore('${name}')">تعديل</button>
+                <button class="reset-btn" onclick="resetServant('${name}')">مسح</button>
             </td></tr>`;
         }
+        document.getElementById('adminBody').innerHTML = html;
     }
 
-    function deleteRecord(name) {
+    function resetServant(name) {
         let scores = JSON.parse(localStorage.getItem("scores"));
         delete scores[name];
         localStorage.setItem("scores", JSON.stringify(scores));
-        updateAdminTable();
+        renderAdmin();
+    }
+
+    function login() {
+        let name = document.getElementById('servantSelect').value;
+        if(SERVANT_PASSWORDS[name] === document.getElementById('pass').value) {
+            alert("تم الدخول!");
+        } else {
+            alert("كود خاطئ!");
+        }
+    }
+    
+    function downloadExcelReport() {
+        let scores = JSON.parse(localStorage.getItem("scores")) || {};
+        let data = Object.keys(scores).map(name => ({ "الاسم": name, "الدرجة": scores[name] }));
+        let ws = XLSX.utils.json_to_sheet(data);
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "النتائج");
+        XLSX.writeFile(wb, "نتائج_الخدام.xlsx");
     }
 </script>
 </body>
